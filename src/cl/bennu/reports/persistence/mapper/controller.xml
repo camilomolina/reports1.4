@@ -1,0 +1,45 @@
+<!DOCTYPE sqlMap PUBLIC
+        "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Controller">
+
+    <resultMap id="controllerResult" class="cl.bennu.reports.commons.dto.ControllerDTO">
+        <result property="id" column="CTRL_SEQ_CDG"/>
+        <result property="name" column="CTRL_NOMBRE"/>
+    </resultMap>
+
+    <select id="getAllController" resultMap="controllerResult"
+            parameterClass="cl.bennu.reports.commons.dto.ControllerDTO">
+        SELECT CTRL_SEQ_CDG
+          , CTRL_NOMBRE
+        FROM CONTROLADOR
+    </select>
+
+    <select id="getControllerById" resultMap="controllerResult" parameterClass="java.lang.Long">
+        SELECT CTRL_SEQ_CDG
+          , CTRL_NOMBRE
+        FROM CONTROLADOR
+        WHERE  CTRL_SEQ_CDG = #id#
+    </select>
+
+    <insert id="insertController" parameterClass="cl.bennu.reports.commons.dto.ControllerDTO">
+        INSERT INTO CONTROLADOR (CTRL_NOMBRE) VALUES (#name#)
+        <selectKey keyProperty="id" resultClass="java.lang.Long">
+            SELECT @@IDENTITY
+        </selectKey>
+    </insert>
+
+    <delete id="deleteController" parameterClass="java.lang.Long">
+        DELETE FROM CONTROLADOR
+        WHERE CTRL_SEQ_CDG = #id#
+    </delete>
+
+    <update id="updateController" parameterClass="cl.bennu.reports.commons.dto.ControllerDTO">
+        UPDATE CONTROLADOR
+        SET CTRL_NOMBRE = #name#
+        WHERE CTRL_SEQ_CDG = #id#
+    </update>
+
+</sqlMap>
+

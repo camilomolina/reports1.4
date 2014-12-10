@@ -1,0 +1,82 @@
+<!DOCTYPE sqlMap PUBLIC
+        "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Report">
+    
+    <resultMap id="reportResult" class="cl.bennu.reports.commons.dto.ReportDTO">
+        <result property="id" column="RPTE_SEQ_CDG"/>
+        <result property="areaId" column="AREA_SEQ_CDG"/>
+        <result property="conexionId" column="CONX_SEQ_CDG"/>
+        <result property="name" column="RPTE_NOMBRE"/>
+        <result property="description" column="RPTE_DESCRIPCION"/>
+        <result property="sql" column="RPTE_SQL"/>
+        <result property="active" column="RPTE_ACTIVO"/>
+        <result property="createUser" column="RPTE_USUARIO_CREADOR"/>
+        <result property="create" column="RPTE_FECHA_CREACION"/>
+        <result property="updateUser" column="RPTE_USUARIO_MODIFICADOR"/>
+        <result property="update" column="RPTE_FECHA_MODIFICACION"/>
+        <result property="parameterList" column="RPTE_SEQ_CDG_4_PARAMETER"  select="getParameterByReportId"/>
+    </resultMap>
+
+    <sql id="selectReport">
+        SELECT RPTE_SEQ_CDG
+          , AREA_SEQ_CDG
+          , CONX_SEQ_CDG
+          , RPTE_NOMBRE
+          , RPTE_DESCRIPCION
+          , RPTE_SQL
+          , RPTE_ACTIVO
+          , RPTE_USUARIO_CREADOR
+          , RPTE_FECHA_CREACION
+          , RPTE_USUARIO_MODIFICADOR
+          , RPTE_FECHA_MODIFICACION
+          , RPTE_SEQ_CDG as RPTE_SEQ_CDG_4_PARAMETER
+        FROM REPORTE
+    </sql>
+
+    <select id="getAllReport" parameterClass="cl.bennu.reports.commons.dto.ReportDTO" resultMap="reportResult">
+        <include refid="selectReport"/>
+    </select>
+
+    <select id="getReportById" parameterClass="java.lang.Long" resultMap="reportResult">
+        <include refid="selectReport"/>
+        WHERE RPTE_SEQ_CDG = #value#
+    </select>
+
+    <select id="getReportByName" parameterClass="java.lang.String" resultMap="reportResult">
+        <include refid="selectReport"/>
+        WHERE RPTE_NOMBRE = #value#
+    </select>
+
+    <insert id="insertReport" parameterClass="cl.bennu.reports.commons.dto.ReportDTO">
+        INSERT INTO REPORTE (AREA_SEQ_CDG, CONX_SEQ_CDG, RPTE_NOMBRE, RPTE_DESCRIPCION, RPTE_SQL, RPTE_ACTIVO, RPTE_USUARIO_CREADOR, RPTE_FECHA_CREACION)
+        VALUES (#areaId#, #conexionId#, #name#, #description#, #sql#, #active#, 'ADMIN', GETDATE())
+        <selectKey keyProperty="id" resultClass="java.lang.Long">
+            SELECT @@IDENTITY
+        </selectKey>
+    </insert>
+
+    <update id="updateReport" parameterClass="cl.bennu.reports.commons.dto.ReportDTO">
+        UPDATE REPORTE SET
+          AREA_SEQ_CDG = #areaId#
+          , CONX_SEQ_CDG = #conexionId#
+          , RPTE_NOMBRE = #name#
+          , RPTE_DESCRIPCION = #description#
+          , RPTE_SQL = #sql#
+        WHERE RPTE_NOMBRE = #id#
+    </update>
+
+    <delete id="deleteReport" parameterClass="java.lang.Long">
+        DELETE FROM REPORTE WHERE RPTE_SEQ_CDG = #value#
+    </delete>
+
+    <!-- pa que shusha es esto!!! no deberia ser asi...  -->
+    <update id="updateParametroIdReporte" parameterClass="java.lang.Long">
+        UPDATE PARAMETROS_REPORTE
+        SET RPTE_SEQ_CDG = #value#
+        WHERE RPTE_SEQ_CDG IS NULL
+    </update>
+
+</sqlMap>

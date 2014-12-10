@@ -1,0 +1,77 @@
+<!DOCTYPE sqlMap PUBLIC
+        "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Parameter">
+
+    <resultMap id="parameterResult" class="cl.bennu.reports.commons.dto.ParameterDTO">
+        <result property="id" column="PARE_SEQ_CDG"/>
+        <result property="reportId" column="RPTE_SEQ_CDG"/>
+        <result property="name" column="PARE_NOMBRE"/>
+        <result property="type" column="TPPR_SEQ_CDG"/>
+        <result property="required" column="PARE_REQUERIDO"/>
+        <result property="like" column="PARE_COMO"/>
+        <result property="data1" column="PARE_DATO1"/>
+        <result property="data2" column="PARE_DATO2"/>
+    </resultMap>
+
+    <sql id="selectParameter">
+        SELECT PARE_SEQ_CDG
+          , RPTE_SEQ_CDG
+          , TPPR_SEQ_CDG
+          , PARE_NOMBRE
+          , PARE_REQUERIDO
+          , PARE_COMO
+          , PARE_DATO1
+          , PARE_DATO2
+        FROM PARAMETROS_REPORTE
+    </sql>
+
+    <select id="getAllParameter" parameterClass="cl.bennu.reports.commons.dto.ParameterDTO" resultMap="parameterResult">
+        <include refid="selectParameter"/>
+    </select>
+
+    <select id="getParameterById" parameterClass="java.lang.Long" resultMap="parameterResult">
+        <include refid="selectParameter"/>
+        WHERE PARE_SEQ_CDG = #value#
+    </select>
+
+    <insert id="insertParametro" parameterClass="cl.bennu.reports.commons.dto.ParameterDTO">
+        INSERT INTO PARAMETROS_REPORTE (RPTE_SEQ_CDG, TPPR_SEQ_CDG, PARE_NOMBRE, PARE_REQUERIDO, PARE_COMO, PARE_DATO1, PARE_DATO2)
+        VALUES (#reportId#, #type#, #name#, #required#, #like#, #data1#, #data2#)
+        <selectKey keyProperty="id" resultClass="java.lang.Long">
+            SELECT @@IDENTITY
+        </selectKey>
+    </insert>
+
+    <update id="updateParameter" parameterClass="cl.bennu.reports.commons.dto.ParameterDTO">
+        UPDATE PARAMETROS_REPORTE SET
+            TPPR_SEQ_CDG = #type#
+            , RPTE_SEQ_CDG = #reportId#
+            , PARE_NOMBRE = #name#
+            , PARE_REQUERIDO = #required#
+            , PARE_COMO = #like#
+            , PARE_DATO1 = #data1#
+            , PARE_DATO2 = #data2#
+        WHERE PARE_SEQ_CDG = #id#
+    </update>
+
+    <delete id="deleteParameter" parameterClass="java.lang.Long">
+        DELETE FROM PARAMETROS_REPORTE WHERE PARE_SEQ_CDG = #value#
+    </delete>
+
+    <select id="getParameterByReportId" parameterClass="java.lang.Long" resultMap="parameterResult">
+        <include refid="selectParameter"/>
+        WHERE RPTE_SEQ_CDG = #value#
+    </select>
+
+    <insert id="insertParameter" parameterClass="cl.bennu.reports.commons.dto.ParameterDTO">
+        INSERT INTO PARAMETROS_REPORTE (TPPR_SEQ_CDG, RPTE_SEQ_CDG, PARE_NOMBRE, PARE_REQUERIDO, PARE_COMO)
+        VALUES (#type#, #reportId#, #name#, #required#, #like#)
+    </insert>
+
+    <delete id="deleteParameterByReportId" parameterClass="java.lang.Long">
+        DELETE PARAMETROS_REPORTE WHERE RPTE_SEQ_CDG=#value#
+    </delete>
+
+</sqlMap>

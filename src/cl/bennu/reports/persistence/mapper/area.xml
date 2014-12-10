@@ -1,0 +1,48 @@
+<!DOCTYPE sqlMap PUBLIC
+        "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Area">
+
+    <resultMap id="areaResult" class="cl.bennu.reports.commons.dto.AreaDTO">
+        <result property="id" column="AREA_SEQ_CDG"/>
+        <result property="name" column="AREA_NOMBRE"/>
+    </resultMap>
+
+    <sql id="selectArea">
+      SELECT AREA_SEQ_CDG
+          , AREA_NOMBRE
+    </sql>
+
+    <select id="getAllArea" resultMap="areaResult" parameterClass="cl.bennu.reports.commons.dto.AreaDTO">
+        <include refid="selectArea"/>
+        FROM AREA
+    </select>
+
+    <select id="getAreaById" parameterClass="java.lang.Long" resultMap="areaResult">
+        <include refid="selectArea"/>
+        FROM AREA
+        WHERE AREA_SEQ_CDG = #value#
+    </select>
+
+
+    <insert id="insertArea" parameterClass="cl.bennu.reports.commons.dto.AreaDTO">
+        INSERT INTO AREA (AREA_NOMBRE)
+        VALUES (#name#)
+        <selectKey keyProperty="id" resultClass="java.lang.Long">
+            select @@IDENTITY
+        </selectKey>
+    </insert>
+
+    <update id="updateArea" parameterClass="cl.bennu.reports.commons.dto.AreaDTO">
+        UPDATE AREA
+        SET AREA_NOMBRE = #name#
+        WHERE AREA_SEQ_CDG = #id#
+    </update>
+
+    <delete id="deleteArea" parameterClass="java.lang.Long">
+        DELETE FROM AREA
+        WHERE AREA_SEQ_CDG = #value#
+    </delete>
+
+</sqlMap>

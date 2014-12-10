@@ -1,0 +1,268 @@
+body {
+
+}
+
+label, input {
+    display: inline-block;
+}
+
+input.text {
+    margin-bottom: 12px;
+    width: 95%;
+    padding: .4em;
+}
+
+fieldset {
+    padding: 0;
+    border: 0;
+    margin-top: 25px;
+}
+
+h1 {
+    font-size: 1.2em;
+    margin: .6em 0;
+}
+
+div#list-contain {
+    width: 350px;
+    margin: 20px 0;
+}
+
+div#list-contain table {
+    margin: 1em 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+div#list-contain table td,
+div#list-contain table th {
+    border: 1px solid #eee;
+    padding: .6em 10px;
+    text-align: left;
+}
+
+.ui-dialog .ui-state-error {
+    padding: .3em;
+}
+
+.validateTips {
+    border: 1px solid transparent;
+    padding: 0.3em;
+}
+
+/* CSS Seguridad*/
+
+.tableDatos {
+    color: #003B71;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: Helvetica;
+    padding: 3px 2px 3px 2px;
+    width: 600px;
+    text-align: left;
+}
+
+.ui-menu {
+    width: 150px;
+}
+
+#tableDatos {
+    color: #003B71;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: Helvetica;
+    padding: 3px 2px 3px 2px;
+    width: 600px;
+    text-align: left;
+}
+
+#tableDatos2 {
+    color: #003B71;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: Helvetica;
+    padding: 3px 2px 3px 2px;
+    width: 600px;
+    text-align: left;
+}
+
+#tableDatos td {
+    padding: 3px 2px 3px 2px;
+    vertical-align: top;
+}
+
+#tableSql {
+    align: center;
+    color: #003B71;
+    width: 456px;
+    /*font-size: 60%;*/
+}
+
+#tableCambioRol {
+    align: center;
+    color: #003B71;
+}
+
+ul li {
+    font-size: 70%;
+    height: 30px;
+    color: #003B71;
+}
+
+.acciones {
+    width: 150px;
+    vertical-align: top;
+}
+
+#list {
+    border-collapse: collapse;
+    width: 600px;
+}
+
+#tabs {
+    position: absolute;
+    width: 700px;
+}
+
+#list row:hover {
+    background-color: #fbec88;
+}
+
+#list th {
+    font-size: 14px;
+    border: 1px;
+    border-color: #66B2FF;
+    border-style: solid;
+    font-family: Helvetica;
+    color: #003B71;
+    background-color: #efefef;
+    padding: 10px 6px 10px 6px;
+}
+
+#list td {
+    font-size: 12px;
+    font-family: Helvetica;
+    border: 1px;
+    border-color: #66B2FF;
+    border-style: solid;
+    color: #003B71;
+    background-color: #ffffff;
+    padding: 7px 6px 7px 6px;
+}
+
+#tabs-2 a {
+    color: #003B71;
+}
+
+#logo {
+    color: #003B71;
+    font: helvetica 20px;
+}
+
+.editar {
+    width: 20px;
+}
+
+.eliminar {
+    width: 20px;
+}
+
+.selectRol {
+    border: 1px;
+    border-color: #66B2FF;
+    border-style: solid;
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #003B71;
+    background-color: #ffffff;
+}
+
+.inputPrincipal {
+    border: 1px;
+    border-color: #66B2FF;
+    border-style: solid;
+    /*border-radius: 10px;*/
+    width: 220px;
+    width: 220px \0/;
+    *width: 220px;
+    _width: 220px;
+    height: 30px;
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #003B71;
+    background-color: #ffffff;
+    padding: 5px 5px 5px 5px;
+    padding: 5px 5px 5px 5px \0/;
+    *padding: 5px 5px 5px 5px;
+    _padding: 5px 5px 5px 5px;
+    margin-left: 4px;
+}
+
+.inputPrincipalSelect {
+    border: 1px;
+    border-color: #66B2FF;
+    border-style: solid;
+    /*border-radius: 10px;*/
+    width: 300px;
+    width: 300px \0/;
+    *width: 300px;
+    _width: 300px;
+    height: 30px;
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #003B71;
+    background-color: #ffffff;
+    padding: 5px 5px 5px 5px;
+    padding: 5px 5px 5px 5px \0/;
+    *padding: 5px 5px 5px 5px;
+    _padding: 5px 5px 5px 5px;
+    margin-left: 4px;
+}
+
+.descripcion {
+    width: 437px;
+    width: 437px \0/;
+    *width: 437px;
+    _width: 437px;
+
+    height: 60px;
+
+    resize: none;
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #003B71;
+    background-color: #ffffff;
+    border: 1px;
+    border-color: #66B2FF;
+    border-style: solid;
+
+    margin-left: 4px;
+
+    padding: 0px 0px 0px 5px;
+    padding: 0px 0px 0px 5px \0/;
+    *padding: 0px 0px 0px 5px;
+    _padding: 0px 0px 0px 5px;
+}
+
+#list img {
+    font-size: 70%;
+    color: #003B71;
+    cursor: pointer;
+}
+
+#tableApplication {
+    border: 1px;
+    border-color: #66B2FF;
+    border-style: solid;
+    font-family: Helvetica;
+    font-weight: bold;
+    font-size: 14px;
+    color: #003B71;
+}
+
+.ui-tooltip {
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color: #666;
+    white-space: nowrap;
+}
