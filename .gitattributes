@@ -21,4 +21,3 @@
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
 
-.idea
