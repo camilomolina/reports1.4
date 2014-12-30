@@ -19,4 +19,5 @@ public interface IParameterDAO {
     void delete(Long id) throws Exception;
 
     void deleteByReportId(Long reporteId) throws SQLException;
+
 }

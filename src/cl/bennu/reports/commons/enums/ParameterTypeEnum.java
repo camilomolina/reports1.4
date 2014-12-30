@@ -43,7 +43,10 @@ public class ParameterTypeEnum extends ValuedEnum {
 
     public final Long getId() {
         return new Long(getValue());
+    }
 
+    public final String getEnumName() {
+        return getName();
     }
 
     public static Iterator iterator() {

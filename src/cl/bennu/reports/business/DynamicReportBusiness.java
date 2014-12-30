@@ -2,6 +2,7 @@ package cl.bennu.reports.business;
 
 import cl.bennu.reports.commons.dto.*;
 import cl.bennu.reports.commons.dto.base.ContextDTO;
+import cl.bennu.reports.commons.enums.ParameterTypeEnum;
 import cl.bennu.reports.persistence.dao.*;
 import cl.bennu.reports.persistence.factory.AbstractFactory;
 import org.apache.commons.collections.IteratorUtils;
@@ -19,20 +20,18 @@ public class DynamicReportBusiness {
     private static final DynamicReportBusiness instance = new DynamicReportBusiness();
 
     private IAreaDAO areaDAO;
-    private IParameterDAO parametroDAO;
+    private IParameterDAO parameterDAO;
     private IControllerDAO controladorDAO;
     private IParameterTypeDAO tipoParametroDAO;
     private IConexionDAO conexionDAO;
-    private IReportDAO reporteDAO;
-
-    private static final String FONT_NAME = "Verdana";
+    private IReportDAO reportDAO;
 
     private DynamicReportBusiness() {
         areaDAO = AbstractFactory.getAreaDAO();
-        parametroDAO = AbstractFactory.getParameterDAO();
+        parameterDAO = AbstractFactory.getParameterDAO();
         controladorDAO = AbstractFactory.getControllerDAO();
         tipoParametroDAO = AbstractFactory.getParameterTypeDAO();
-        reporteDAO = AbstractFactory.getReportDAO();
+        reportDAO = AbstractFactory.getReportDAO();
         conexionDAO = AbstractFactory.getConexionDAO();
     }
 
@@ -93,11 +92,11 @@ public class DynamicReportBusiness {
     }
 
     public List getAllParameter(ContextDTO contextDTO) throws Exception {
-        return parametroDAO.getAll();
+        return parameterDAO.getAll();
     }
 
     public ParameterDTO getParameterById(ContextDTO contextDTO, Long parametroId) throws Exception {
-        return parametroDAO.getById(parametroId);
+        return parameterDAO.getById(parametroId);
     }
 
     public void saveParameter(ContextDTO contextDTO, ParameterDTO parameterDTO) throws Exception {
@@ -105,17 +104,18 @@ public class DynamicReportBusiness {
             parameterDTO.setCreate(new Date());
             parameterDTO.setCreateUser(contextDTO.getUser());
 
-            parametroDAO.insert(parameterDTO);
+            //parameterDAO.insert(parameterDTO);
         } else {
             parameterDTO.setUpdate(new Date());
             parameterDTO.setUpdateUser(contextDTO.getUser());
 
-            parametroDAO.update(parameterDTO);
+            //parameterDAO.update(parameterDTO);
         }
+        parameterDAO.insert(parameterDTO);
     }
 
     public void deleteParameter(ContextDTO contextDTO, Long parameterId) throws Exception {
-        parametroDAO.delete(parameterId);
+        parameterDAO.delete(parameterId);
     }
 
     public List getAllParameterType(ContextDTO contextDTO) throws Exception {
@@ -173,71 +173,100 @@ public class DynamicReportBusiness {
     }
 
     public void saveReport(ContextDTO contextDTO, ReportDTO reportDTO) throws Exception {
-        if (reportDTO.getId() == null) {
-            reporteDAO.insert(reportDTO);
-        } else {
-            reporteDAO.update(reportDTO);
-        }
-        Long id = reportDTO.getId();
+        try {
+            if (reportDTO.getId() == null) {
+                reportDAO.insert(reportDTO);
+            } else {
+                reportDAO.update(reportDTO);
+            }
+            Long id = reportDTO.getId();
 
-        Iterator iter = IteratorUtils.getIterator(reportDTO.getParameterList());
+            if (reportDTO.getId() != null){parameterDAO.deleteByReportId(id);}
 
-        ParameterDTO reporteParametro = new ParameterDTO();
+            Iterator iter = IteratorUtils.getIterator(reportDTO.getParameterList());
 
-
-        while (iter.hasNext()) {
-            reporteParametro = (ParameterDTO) iter.next();
-            reporteParametro.setReportId(id);
-            System.out.println(reporteParametro.getId());
-            System.out.println(reporteParametro.getName());
-            //System.out.println(reporteParametro.getTypeName());
-            System.out.println(reporteParametro.getRequired());
-            saveParameter(contextDTO, reporteParametro);
+            ParameterDTO parameterDTO = null;
+            while (iter.hasNext()) {
+                parameterDTO = (ParameterDTO) iter.next();
+                parameterDTO.setReportId(id);
+                if (parameterDTO.getData1() == null) {
+                    parameterDTO.setData1("");
+                }
+                if (parameterDTO.getData2() == null) {
+                    parameterDTO.setData2("");
+                }
+                parameterDTO.setUpdate(new Date());
+                parameterDTO.setUpdateUser(contextDTO.getUser());
+                System.out.println(parameterDTO.getId());
+                System.out.println(parameterDTO.getName());
+                System.out.println(parameterDTO.getReportId());
+                System.out.println(parameterDTO.getRequired());
+                //if (reportDTO.getId() != null) {
+                    //saveParameter(contextDTO, parameterDTO);
+                    //updateParameter(contextDTO, parameterDTO);
+                    //parameterDAO.update(parameterDTO);
+                //    saveParameter(contextDTO, parameterDTO);
+                //} else {
+                    saveParameter(contextDTO, parameterDTO);
+                //}
+            }
+        } catch (Exception e){
+            System.out.println("No se pudo ingresar el parametro");
         }
     }
 
     public List getAllReport(ContextDTO contextDTO) throws Exception {
-        return reporteDAO.getAll();
+        return reportDAO.getAll();
     }
 
     public ReportDTO getReportById(ContextDTO contextDTO, Long reportId) throws Exception {
-        return reporteDAO.getById(reportId);
+        //return reportDAO.getById(reportId);
+        ReportDTO reportDTO = reportDAO.getById(reportId);
+
+        Iterator iter = reportDTO.getParameterList().iterator();
+        //The parameter type is added
+        while (iter.hasNext()){
+            ParameterDTO parameterDTO = (ParameterDTO) iter.next();
+            ParameterTypeEnum parameterTypeEnum = (ParameterTypeEnum) ParameterTypeEnum.getEnumList().get((parameterDTO.getType().intValue()-1));
+            parameterDTO.setTypeName(parameterTypeEnum.getEnumName());
+        }
+
+
+        return reportDTO;
     }
 
     public void deleteReport(ContextDTO contextDTO, Long reporteId) throws Exception {
 
         //before deleting the report parameters must be removed
-        parametroDAO.deleteByReportId(reporteId);
+        parameterDAO.deleteByReportId(reporteId);
         //now eliminate the report
-        reporteDAO.delete(reporteId);
+        reportDAO.delete(reporteId);
     }
 
     public ReportDTO getReport(ContextDTO contextDTO, String name) throws Exception {
-        return reporteDAO.getByName(name);
+        return reportDAO.getByName(name);
     }
 
     public OutputStream generate(ContextDTO contextDTO, ReportDTO reportDTO) throws Exception {
-        List list = reporteDAO.execute(reportDTO);
+        List list = reportDAO.execute(reportDTO);
 
-//        String reportTitle = reportDTO.getName();
+        String reportTitle = reportDTO.getName();
 
         HSSFWorkbook workBook = new HSSFWorkbook();
 
         HSSFFont fontTitle = workBook.createFont();
-        fontTitle.setColor(HSSFColor.BLUE_GREY.index);
         fontTitle.setFontHeightInPoints((short) 14);
-        fontTitle.setFontName(FONT_NAME);
+        fontTitle.setColor(HSSFColor.BLUE_GREY.index);
+        fontTitle.setFontName(HSSFFont.FONT_ARIAL);
 
         HSSFFont fontHeader = workBook.createFont();
-        fontHeader.setColor(HSSFColor.WHITE.index);
         fontHeader.setFontHeightInPoints((short) 8);
+        fontHeader.setColor(HSSFColor.BLACK.index);
         fontHeader.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-        fontHeader.setFontName(FONT_NAME);
 
         HSSFFont fontNormal = workBook.createFont();
-        fontNormal.setColor(HSSFColor.GREY_80_PERCENT.index);
+        fontNormal.setColor(HSSFColor.BLACK.index);
         fontNormal.setFontHeightInPoints((short) 8);
-        fontNormal.setFontName(FONT_NAME);
 
 
         HSSFCellStyle cellStyleTitle = workBook.createCellStyle();
@@ -246,23 +275,25 @@ public class DynamicReportBusiness {
 
         HSSFCellStyle cellStyleHeader = workBook.createCellStyle();
         cellStyleHeader.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+        //cellStyleHeader.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+        //cellStyleHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        //cellStyleHeader.setWrapText(false);
+        //cellStyleHeader.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
         cellStyleHeader.setFont(fontHeader);
-        cellStyleHeader.setFillForegroundColor(HSSFColor.DARK_BLUE.index);
-        cellStyleHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        cellStyleHeader.setBottomBorderColor(HSSFCellStyle.BORDER_THIN);
-        cellStyleHeader.setTopBorderColor(HSSFCellStyle.BORDER_THIN);
-        cellStyleHeader.setLeftBorderColor(HSSFCellStyle.BORDER_THIN);
-        cellStyleHeader.setRightBorderColor(HSSFCellStyle.BORDER_THIN);
 
         HSSFCellStyle cellStyleNormal = workBook.createCellStyle();
+        //cellStyleNormal.setWrapText(false);
+        //cellStyleNormal.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
         cellStyleNormal.setFont(fontNormal);
 
         HSSFCellStyle cellStyleNumber = workBook.createCellStyle();
+        //cellStyleNumber.setWrapText(true);
         cellStyleNumber.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
         cellStyleNumber.setFont(fontNormal);
         cellStyleNumber.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0.0000"));
 
         HSSFCellStyle cellStyleDate = workBook.createCellStyle();
+        //cellStyleDate.setWrapText(true);
         cellStyleDate.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
         cellStyleDate.setFont(fontNormal);
         cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));

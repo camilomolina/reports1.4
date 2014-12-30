@@ -17,13 +17,13 @@ public class ParameterDTO extends BaseDTO {
     private Boolean required;
     private Boolean like;
 
+    private String data1;
+    private String data2;
+
     // valor ingresado
     private Object value;
     private Object valueR1;
     private Object valueR2;
-
-    private String data1;
-    private String data2;
 
     public String getData1() {
         return data1;
