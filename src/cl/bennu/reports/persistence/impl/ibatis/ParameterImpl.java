@@ -40,4 +40,5 @@ public class ParameterImpl extends IbatisUtils implements IParameterDAO {
         getSqlMapClient().delete("deleteParameterByReportId", id);
     }
 
+
 }

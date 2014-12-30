@@ -51,6 +51,9 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
     public List execute(ReportDTO reportDTO) throws Exception {
         Connection connection = getSqlMapClient().getDataSource().getConnection();
 
+        String sql = reportDTO.getSql();
+
+
         // filtramos opcionales
         String sqlWithParameter = filterQueryForOptional(reportDTO);
 
@@ -58,9 +61,6 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
         List parameters = new ArrayList();
         sqlWithParameter = filterQueryForParameters(reportDTO, sqlWithParameter, parameters);
 
-        System.out.println("------------------SQL a ejecutar------------------");
-        System.out.println(sqlWithParameter);
-        System.out.println("------------------SQL a ejecutar------------------");
         PreparedStatement preparedStatement = connection.prepareStatement(sqlWithParameter);
 
         int i = 1;
@@ -218,11 +218,7 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
         } else if (parameterDTO.getType().equals(ParameterTypeEnum.NUMERIC.getId())) {
             return parameterDTO.getValue() != null;
         } else if (parameterDTO.getType().equals(ParameterTypeEnum.BOOLEAN.getId())) {
-            if (parameterDTO.getData2().equalsIgnoreCase("IF")) {
-                return BooleanUtils.isTrue((Boolean) parameterDTO.getValue());
-            } else {
-                return parameterDTO.getValue() != null;
-            }
+            return parameterDTO.getValue() != null;
         } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE_RANGE.getId())) {
             return parameterDTO.getValueR1() != null && parameterDTO.getValueR2() != null;
         }

@@ -121,4 +121,8 @@ public class DynamicReportDelegate {
     public void deleteReport(ContextDTO contextDTO, Long reportId) throws Exception {
         DynamicReportBusiness.getInstance().deleteReport(contextDTO, reportId);
     }
+
+    public ReportDTO getReportById(ContextDTO contextDTO, Long reportId) throws Exception {
+        return DynamicReportBusiness.getInstance().getReportById(contextDTO,reportId);
+    }
 }

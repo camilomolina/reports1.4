@@ -65,7 +65,7 @@
           , RPTE_NOMBRE = #name#
           , RPTE_DESCRIPCION = #description#
           , RPTE_SQL = #sql#
-        WHERE RPTE_NOMBRE = #id#
+        WHERE RPTE_SEQ_CDG = #id#
     </update>
 
     <delete id="deleteReport" parameterClass="java.lang.Long">

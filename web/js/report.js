@@ -96,12 +96,7 @@ var Report = {
             $("#dialogBase64").dialog({
                 title: "Mensaje",
                 modal: true,
-                draggable: false,
-                resizable: false,
-                closeOnEscape: false,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar-close", ui.dialog).hide();
-                }
+                draggable: false
             });
 
             $("#method").val("generateBase64");

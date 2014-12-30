@@ -57,25 +57,55 @@ var MaintainerReports = {
     },
 
     clean: function(){
-      $("#name").val("");
-      $("#areaId").val(-1);
-      $("#sqlDescription").val("");
-      $("#sqlText").val("");
-      $("#parameterName").val("");
-      $("#parameterTypeId").val(-1);
-      $("#parameterRequired").prop("checked",false);
-      ;
+        $("#name").val("");
+        $("#areaId").val(-1);
+        $("#sqlDescription").val("");
+        $("#sqlText").val("");
+        $("#parameterName").val("");
+        $("#parameterTypeId").val(-1);
+        $("#parameterRequired").prop("checked",false);
+
+        $.ajax({
+            url:"/reports14/maintainerReports.do"
+            , method: "POST"
+            , data: "method=clean"
+            , dataType: "html"
+            , success: function(html){
+                MaintainerReports.cleanTableParameter();
+            }
+            , error: function(){
+                alert("No he podido limpiar todo");
+            }
+        });
     },
 
-    get: function(id) {
+    cleanParameter: function(){
+        $("#parameterName").val("");
+        $("#parameterTypeId").val(-1);
+        $("#parameterRequired").prop("checked",false);
+    },
 
+    cleanTableParameter: function(){
+        $.ajax({
+            url:"/reports14/maintainerReports.do"
+            , method:"POST"
+            , data: "method=cleanTableParameter"
+            , dataType: "html"
+            , success: function(html){
+                MaintainerReports.refresh();
+            }
+            , error: function(){
+                alert("No pude actualizar la tabla de parametros");
+            }
+        });
     },
 
     addParameter: function(){
         if (MaintainerReports.validateParameter()){
             var parameters = {
-                "method":"addParameter",
-                "parameterName":$("#parameterName").val()
+                "method":"addParameter"
+                //, "parameterId":$("#id").val()
+                , "parameterName":$("#parameterName").val()
                 , "parameterTypeId":$("#parameterTypeId").val()
                 , "parameterRequired":$("#parameterRequired").prop("checked")
                 , "parameterTypeName":$("#parameterTypeId option:selected").text()
@@ -88,6 +118,7 @@ var MaintainerReports = {
                 , dataType:"html"
                 , success:function(html){
                     MaintainerReports.refresh();
+                    MaintainerReports.cleanParameter();
                 }
             });
         }else{
@@ -100,41 +131,21 @@ var MaintainerReports = {
         var parameter = {
             "method": "editParameter"
             , "parameterId":id
-        }
+        };
 
         $(function() {
-            //Se declara el texto
-            var div='<div id="dialog-confirm" title="Confirmar">'+
-                '<p>' +
-                '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;"></span>'+
-                '¿Desea editar el parametro?'+
-                '</p>'+
-                '</div>';
-
-            $(div).dialog({
-                resizable: false,
-                height:210,
-                modal: true,
-                buttons: {
-                    "Editar": function() {
-                        $( this ).dialog( "close" );
-                        $.ajax({
-                            url:"/reports14/maintainerReports.do"
-                            , data: parameter
-                            , dataType: "json"
-                            , success:function(json){
-                                $("#parameterName").val(json.name);
-                                $("#parameterTypeId").val(json.type);
-                                if (json.required==true){
-                                    $("#parameterRequired").prop('checked',true);
-                                }else{
-                                    $("#parameterRequired").prop('checked',false);
-                                }
-                            }
-                        });
-                    },
-                    Cancelar: function() {
-                        $( this ).dialog( "close" );
+            $.ajax({
+                url:"/reports14/maintainerReports.do"
+                , data: parameter
+                , dataType: "json"
+                , success:function(json){
+                    //$("#parameterId").val(json.id);
+                    $("#parameterName").val(json.name);
+                    $("#parameterTypeId").val(json.type);
+                    if (json.required==true){
+                        $("#parameterRequired").prop('checked',true);
+                    }else{
+                        $("#parameterRequired").prop('checked',false);
                     }
                 }
             });
@@ -145,7 +156,8 @@ var MaintainerReports = {
         var parameter = {
             "method": "delParameter"
             , "parameterId": id
-        }
+        };
+
         $(function() {
             //Se declara el texto
             var div='<div id="dialog-confirm" title="Confirmar">'+
@@ -189,8 +201,7 @@ var MaintainerReports = {
                 , "areaId":$("#areaId").val()
                 , "sqlDescription":$("#sqlDescription").val()
                 , "sqlText": $("#sqlText").val()
-            }
-            alert("Estoy guardando el reporte");
+            };
 
             $.ajax({
                 url:"/reports14/maintainerReports.do"
@@ -200,6 +211,7 @@ var MaintainerReports = {
                 , success: function(html){
                     MaintainerReports.refreshReport();
                     MaintainerReports.clean();
+                    MaintainerReports.cleanTableParameter();
                 }
             });
         }else{
@@ -213,17 +225,39 @@ var MaintainerReports = {
             , "reportId": id
         };
 
-        $.ajax({
-            url: "/reports14/maintainerReports.do"
-            , data: parameter
-            , dataType: "html"
-            , success: function(){
-                alert("Elimine el reporte");
-                MaintainerReports.refreshReport();
-            }
-            , error: function(){
-                alert("Estoy con error al eliminar") ;
-            }
+        $(function() {
+            //Se declara el texto
+            var div='<div id="dialog-confirm" title="Confirmar">'+
+                '<p>' +
+                '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;"></span>'+
+                '¿Desea eliminar el Reporte?'+
+                '</p>'+
+                '</div>';
+
+            $(div).dialog({
+                resizable: false,
+                height:230,
+                modal: true,
+                buttons: {
+                    "Eliminar": function() {
+                        $( this ).dialog( "close" );
+                        $.ajax({
+                            url: "/reports14/maintainerReports.do"
+                            , data: parameter
+                            , dataType: "html"
+                            , success: function(){
+                                MaintainerReports.refreshReport();
+                            }
+                            , error: function(){
+                                alert("No se pudo eliminar el reporte") ;
+                            }
+                        });
+                    },
+                    Cancelar: function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
         });
     },
 
@@ -235,9 +269,6 @@ var MaintainerReports = {
             dataType: "html",
             success: function (html) {
                 $("#tableParameters").html(html);
-                $("#parameterName").val("");
-                $("#parameterTypeId").val(-1);
-                $("#parameterRequired").prop("checked",false);
             }
         });
     },
@@ -254,12 +285,41 @@ var MaintainerReports = {
                 $("#areaId").val(-1);
                 $("#sqlDescription").val("");
                 $("#sqlText").val("");
-                alert("Estoy refrescando los reportes");
             }
             , error: function (){
                 alert("No pude refrescar los reportes");
             }
         });
+    },
+
+    editReport: function(id){
+        var parameters = {
+            "method": "editReport"
+            , "reportId": id
+        };
+
+        $(function() {
+            $.ajax ({
+                url: "/reports14/maintainerReports.do"
+                , data: parameters
+                , dataType: "json"
+                , success: function(json){
+                    $("#name").val(json.name);
+                    $("#areaId").val(json.areaId);
+                    $("#sqlDescription").val(json.description);
+                    $("#sqlText").val(json.sql);
+                    $("#tableParameters").val(json.parameterList);
+                    MaintainerReports.refresh();
+                }
+                , error: function(){
+                    alert("No pude editar el reporte");
+                }
+            });
+        });
+    },
+
+    get: function(id) {
+
     },
 
     nuevoMetodo: function (id, name, code) {
