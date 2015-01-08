@@ -25,6 +25,7 @@ public class MaintainerReportsForm extends ActionForm {
     private Integer parameterId;
     private List reportsList;
     private Long reportId;
+    private List conexionList;
 
     public String getMethod() {
         return method;
@@ -137,4 +138,8 @@ public class MaintainerReportsForm extends ActionForm {
     public void setReportId(Long reportId) {
         this.reportId = reportId;
     }
+
+    public List getConexionList() { return conexionList; }
+
+    public void setConexionList(List conexionList) { this.conexionList = conexionList; }
 }

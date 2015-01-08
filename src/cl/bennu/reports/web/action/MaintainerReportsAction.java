@@ -40,8 +40,10 @@ public class MaintainerReportsAction extends BaseAction {
         List enumList = ParameterTypeEnum.getEnumList();
         maintainerReportsForm.setParameterTypeList(enumList);
 
+        List conexionList = DynamicReportDelegate.getInstance().getAllConexionSummary(buildContext(request));
+        maintainerReportsForm.setConexionList(conexionList);
+
         List reportsList = DynamicReportDelegate.getInstance().getAllReport(buildContext(request));
-        //maintainerReportsForm.setReportsList(reportsList);
         request.setAttribute("reportsList", reportsList);
 
         HttpSession httpSession = request.getSession();
@@ -201,12 +203,6 @@ public class MaintainerReportsAction extends BaseAction {
         JSONObject jsonObject = JSONObject.fromObject(parameterDTO);
         ServletOutputStream servletOutputStream = response.getOutputStream();
         servletOutputStream.write(jsonObject.toString().getBytes());
-
-
-        //System.out.println("Estoy editando los parametros");
-
-        //return null;
-        //return mapping.findForward("success");
 
     }
 

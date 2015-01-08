@@ -309,6 +309,7 @@ var MaintainerReports = {
                     $("#sqlDescription").val(json.description);
                     $("#sqlText").val(json.sql);
                     $("#tableParameters").val(json.parameterList);
+                    $("#tabs").tabs("select","maintainer");
                     MaintainerReports.refresh();
                 }
                 , error: function(){
