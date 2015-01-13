@@ -1,0 +1,26 @@
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+        "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+
+    <settings useStatementNamespaces="false"/>
+
+    <transactionManager type="JDBC" commitRequired="true">
+        <dataSource type="SIMPLE">
+            <property name="JDBC.Driver" value="com.microsoft.jdbc.sqlserver.SQLServerDriver"/>
+            <property name="JDBC.ConnectionURL" value="jdbc:sqlserver://10.220.0.31;databaseName=BTCSHPCDB"/>
+            <property name="JDBC.Username" value="user_hipotecario"/>
+            <property name="JDBC.Password" value="hipoteca2012"/>
+            <property name="JDBC.DefaultAutoCommit" value="true"/>
+        </dataSource>
+    </transactionManager>
+
+    <sqlMap resource="cl/bennu/reports/persistence/mapper/area.xml"/>
+    <sqlMap resource="cl/bennu/reports/persistence/mapper/controller.xml"/>
+    <sqlMap resource="cl/bennu/reports/persistence/mapper/parameterType.xml"/>
+    <sqlMap resource="cl/bennu/reports/persistence/mapper/conexion.xml"/>
+
+    <sqlMap resource="cl/bennu/reports/persistence/mapper/report.xml"/>
+    <sqlMap resource="cl/bennu/reports/persistence/mapper/parameter.xml"/>
+
+
+</sqlMapConfig>

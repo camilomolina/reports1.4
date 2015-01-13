@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+        "http://struts.apache.org/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+    <form-beans>
+        <form-bean name="maintainerDatasourceForm" type="cl.bennu.reports.web.form.MaintainerDatasourceForm"/>
+        <form-bean name="reportForm" type="cl.bennu.reports.web.form.ReportForm"/>
+        <form-bean name="maintainerReportsForm" type="cl.bennu.reports.web.form.MaintainerReportsForm"/>
+    </form-beans>
+
+
+    <action-mappings>
+        <action path="/maintainerDatasource"
+                name="maintainerDatasourceForm"
+                type="cl.bennu.reports.web.action.MaintainerDatasourceAction"
+                parameter="method" >
+            <forward name="startDatasource" path="/jsp/maintainerDatasource.jsp"/>
+            <forward name="datasourceList" path="/jsp/jspf/datasourceList.jsp"/>
+        </action>
+
+        <action path="/report" name="reportForm"
+                type="cl.bennu.reports.web.action.ReportAction" parameter="method">
+            <forward name="startReport" path="/jsp/report.jsp"/>
+        </action>
+
+        <action path="/maintainerReports"
+                name="maintainerReportsForm"
+                type="cl.bennu.reports.web.action.MaintainerReportsAction"
+                parameter="method">
+            <forward name="startMaintainerReportsOld" path="/jsp/maintainerReportsOld.jsp"/>
+            <forward name="startMaintainerReports" path="/jsp/maintainerReports.jsp"/>
+            <forward name="success_list" path="/jsp/jspf/parametersList.jsp"/>
+            <forward name="success_report" path="/jsp/jspf/reportsList.jsp"/>
+        </action>
+    </action-mappings>
+
+    <message-resources parameter="cl.bennu.reports.web.MessageResources"/>
+
+</struts-config>

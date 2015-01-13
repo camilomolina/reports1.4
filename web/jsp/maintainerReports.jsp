@@ -3,6 +3,7 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
+<%@ taglib prefix="Logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -41,12 +42,25 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>Conexi&oacute;n</td>
+                    <td>
+                        <html:select property="conexionId" styleId="conexionId" title="Conexi&oacute;n a utilizar">
+                            <html:option value="-1">Seleccione una conexi&oacute;n</html:option>
+                            <logic:notEmpty name="maintainerReportsForm" property="conexionList">
+                                <Logic:iterate id="conexion" name="maintainerReportsForm" property="conexionList">
+                                    <option value="<bean:write name="conexion" property="id"/>"><bean:write name="conexion" property="name"/></option>
+                                </Logic:iterate>
+                            </logic:notEmpty>
+                        </html:select>
+                    </td>
+                </tr>
+                <tr>
                     <td>&Aacute;rea</td>
                     <td>
                         <html:select property="areaId" styleId="areaId" title="&Aacute;rea a la que pertenece">
                             <html:option value="-1">Seleccione un &aacute;rea</html:option>
                             <logic:notEmpty name="maintainerReportsForm" property="areaList">
-                                    <logic:iterate id="area" name="maintainerReportsForm" property="areaList">
+                                <logic:iterate id="area" name="maintainerReportsForm" property="areaList">
                                     <option value="<bean:write name="area" property="id"/>"> <bean:write name="area" property="name"/></option>
                                 </logic:iterate>
                             </logic:notEmpty>
