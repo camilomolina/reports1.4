@@ -38,6 +38,12 @@ var MaintainerReports = {
             ERROR_MESSAGE.push("Debe ingresar nombre del reporte");
             forward = false;
         }
+
+        if ($("#conexionId").val()==-1){
+            ERROR_MESSAGE.push("Debe ingresar una conexi&oacute;");
+            forward = false;
+        }
+
         if ($("#areaId").val()==-1){
             ERROR_MESSAGE.push("Debe ingresar el &aacute;rea");
             forward = false;
@@ -58,6 +64,7 @@ var MaintainerReports = {
 
     clean: function(){
         $("#name").val("");
+        $("#conexionId").val(-1);
         $("#areaId").val(-1);
         $("#sqlDescription").val("");
         $("#sqlText").val("");
@@ -198,6 +205,7 @@ var MaintainerReports = {
             var report = {
                 method: "save"
                 , "name":$("#name").val()
+                , "conexionId":$("#conexionId").val()
                 , "areaId":$("#areaId").val()
                 , "sqlDescription":$("#sqlDescription").val()
                 , "sqlText": $("#sqlText").val()
@@ -282,6 +290,7 @@ var MaintainerReports = {
             , success: function(html){
                 $("#tableReports").html(html);
                 $("#name").val("");
+                $("#conexionId").val(-1);
                 $("#areaId").val(-1);
                 $("#sqlDescription").val("");
                 $("#sqlText").val("");
@@ -305,6 +314,7 @@ var MaintainerReports = {
                 , dataType: "json"
                 , success: function(json){
                     $("#name").val(json.name);
+                    $("#conexionId").val(json.conexionId);
                     $("#areaId").val(json.areaId);
                     $("#sqlDescription").val(json.description);
                     $("#sqlText").val(json.sql);

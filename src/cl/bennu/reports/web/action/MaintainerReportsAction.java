@@ -67,18 +67,6 @@ public class MaintainerReportsAction extends BaseAction {
 
     public ActionForward cleanTableParameter(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-
-/*        MaintainerReportsForm formulario = (MaintainerReportsForm) form;
-
-
-        formulario.setName("");
-        formulario.setAreaId(new Long(-1));
-        formulario.setSqlDescription("");
-        formulario.setSqlText("");
-        formulario.setParameterName("");
-        formulario.setParameterTypeId(new Long(-1));
-        formulario.setParameterRequired(Boolean.valueOf(false));
-*/
         HttpSession httpSession = request.getSession();
         List parametersList = (List) httpSession.getAttribute("PARAMETERS_LIST");
         parametersList.clear();
@@ -153,9 +141,9 @@ public class MaintainerReportsAction extends BaseAction {
         reportDTO.setAreaId(maintainerReportsForm.getAreaId());
         reportDTO.setDescription(maintainerReportsForm.getSqlDescription());
         reportDTO.setSql(maintainerReportsForm.getSqlText());
-        reportDTO.setConexionId(new Long(1));
         reportDTO.setActive(Boolean.TRUE);
         reportDTO.setId(maintainerReportsForm.getReportId());
+        reportDTO.setConexionId(maintainerReportsForm.getConexionId());
 
         HttpSession httpSession = request.getSession();
         List parametersList = (List) httpSession.getAttribute("PARAMETERS_LIST");
@@ -254,6 +242,7 @@ public class MaintainerReportsAction extends BaseAction {
 
             ((MaintainerReportsForm) form).setReportId(null);
             ((MaintainerReportsForm) form).setAreaId(null);
+            ((MaintainerReportsForm) form).setConexionId(null);
             ((MaintainerReportsForm) form).setSqlDescription(null);
             ((MaintainerReportsForm) form).setSqlText(null);
             ((MaintainerReportsForm) form).setParameterId(null);
