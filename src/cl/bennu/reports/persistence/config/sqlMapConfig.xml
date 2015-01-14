@@ -4,6 +4,7 @@
 
     <settings useStatementNamespaces="false"/>
 
+    <!--
     <transactionManager type="JDBC" commitRequired="true">
         <dataSource type="SIMPLE">
             <property name="JDBC.Driver" value="com.microsoft.jdbc.sqlserver.SQLServerDriver"/>
@@ -11,6 +12,14 @@
             <property name="JDBC.Username" value="user_hipotecario"/>
             <property name="JDBC.Password" value="hipoteca2012"/>
             <property name="JDBC.DefaultAutoCommit" value="true"/>
+        </dataSource>
+    </transactionManager>
+  -->
+    <transactionManager type="EXTERNAL">
+        <property name="DefaultAutoCommit" value="false"/>
+        <property name="SetAutoCommitAllowed" value="false"/>
+        <dataSource type="JNDI">
+            <property name="DataSource" value="java:/ReportDS"/>
         </dataSource>
     </transactionManager>
 

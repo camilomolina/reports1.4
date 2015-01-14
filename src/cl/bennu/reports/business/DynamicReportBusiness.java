@@ -164,6 +164,9 @@ public class DynamicReportBusiness {
         if (conexionDTO.getId() == null || conexionDTO.getId().equals(NumberUtils.LONG_ZERO)) {
             conexionDTO.setCreate(new Date());
             conexionDTO.setCreateUser(contextDTO.getUser());
+            String pass = conexionDTO.getPass();
+            conexionDTO.setPass(pass);
+
             conexionDAO.insert(conexionDTO);
         } else {
             conexionDTO.setUpdate(new Date());
