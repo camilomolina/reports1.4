@@ -5,6 +5,7 @@
     <property environment="env" />
 
     <path id="project.class.path">
+        <pathelement location="lib/commons-codec-1.5.jar" />
         <pathelement location="lib/commons-beanutils-1.8.0.jar" />
         <pathelement location="lib/commons-collections-3.2.1.jar" />
         <pathelement location="lib/commons-email-1.2.jar" />

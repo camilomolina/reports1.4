@@ -5,6 +5,7 @@ import cl.bennu.reports.commons.dto.base.ContextDTO;
 import cl.bennu.reports.commons.enums.ParameterTypeEnum;
 import cl.bennu.reports.persistence.dao.*;
 import cl.bennu.reports.persistence.factory.AbstractFactory;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.*;
@@ -164,13 +165,14 @@ public class DynamicReportBusiness {
         if (conexionDTO.getId() == null || conexionDTO.getId().equals(NumberUtils.LONG_ZERO)) {
             conexionDTO.setCreate(new Date());
             conexionDTO.setCreateUser(contextDTO.getUser());
-            String pass = conexionDTO.getPass();
-            conexionDTO.setPass(pass);
-
+            byte[] pass = conexionDTO.getPass().getBytes("UTF-8");
+            conexionDTO.setPass(Base64.encodeBase64String(pass));
             conexionDAO.insert(conexionDTO);
         } else {
             conexionDTO.setUpdate(new Date());
             conexionDTO.setUpdateUser(contextDTO.getUser());
+            byte[] pass = conexionDTO.getPass().getBytes("UTF-8");
+            conexionDTO.setPass(Base64.encodeBase64String(pass));
             conexionDAO.update(conexionDTO);
         }
     }
@@ -200,10 +202,6 @@ public class DynamicReportBusiness {
                 }
                 parameterDTO.setUpdate(new Date());
                 parameterDTO.setUpdateUser(contextDTO.getUser());
-                System.out.println(parameterDTO.getId());
-                System.out.println(parameterDTO.getName());
-                System.out.println(parameterDTO.getReportId());
-                System.out.println(parameterDTO.getRequired());
                 //if (reportDTO.getId() != null) {
                     //saveParameter(contextDTO, parameterDTO);
                     //updateParameter(contextDTO, parameterDTO);
@@ -251,7 +249,9 @@ public class DynamicReportBusiness {
     }
 
     public OutputStream generate(ContextDTO contextDTO, ReportDTO reportDTO) throws Exception {
-        List list = reportDAO.execute(reportDTO);
+        ConexionDTO conexionDTO = getConexionById(contextDTO, reportDTO.getConexionId());
+
+        List list = reportDAO.execute(reportDTO, conexionDTO);
 
         String reportTitle = reportDTO.getName();
 

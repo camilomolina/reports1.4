@@ -1,5 +1,6 @@
 package cl.bennu.reports.persistence.dao;
 
+import cl.bennu.reports.commons.dto.ConexionDTO;
 import cl.bennu.reports.commons.dto.ReportDTO;
 
 import java.util.List;
@@ -24,6 +25,6 @@ public interface IReportDAO {
 
     void delete(Long id) throws Exception;
 
-    List execute(ReportDTO reportDTO) throws Exception;
+    List execute(ReportDTO reportDTO, ConexionDTO conexionDTO) throws Exception;
 
 }

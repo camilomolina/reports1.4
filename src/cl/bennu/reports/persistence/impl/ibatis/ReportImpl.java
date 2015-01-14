@@ -1,19 +1,19 @@
 package cl.bennu.reports.persistence.impl.ibatis;
 
+import cl.bennu.reports.commons.dto.ConexionDTO;
 import cl.bennu.reports.commons.dto.ParameterDTO;
 import cl.bennu.reports.commons.dto.ReportDTO;
 import cl.bennu.reports.commons.enums.ParameterTypeEnum;
 import cl.bennu.reports.persistence.IbatisUtils;
 import cl.bennu.reports.persistence.dao.IReportDAO;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -48,18 +48,41 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
         getSqlMapClient().delete("deleteReport", id);
     }
 
-    public List execute(ReportDTO reportDTO) throws Exception {
-        Connection connection = getSqlMapClient().getDataSource().getConnection();
+    public List execute(ReportDTO reportDTO, ConexionDTO conexionDTO) throws Exception {
 
-        String sql = reportDTO.getSql();
+        String driverBD = "";
+        String url = conexionDTO.getUrl();
+        String user = conexionDTO.getUser();
+        String pass = new String(Base64.decodeBase64(conexionDTO.getPass()));
 
+        //Connection connection = getSqlMapClient().getDataSource().getConnection();
+        if (conexionDTO.getControllerDTO().getId().equals(new Long(1))) {
+            driverBD = "org.postgresql.Driver";
+        } else if (conexionDTO.getControllerDTO().getId().equals(new Long(2))) {
+            driverBD = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
+        } else if (conexionDTO.getControllerDTO().getId().equals(new Long(3))) {
+            driverBD = "com.mysql.jdbc.Driver";
+        } else if (conexionDTO.getControllerDTO().getId().equals(new Long(4))) {
+            driverBD = "oracle.jdbc.driver.OracleDriver";
+        } else if (conexionDTO.getControllerDTO().getId().equals(new Long(5))) {
+            driverBD = "net.sourceforge.jtds.jdbcx.JtdsDataSource";
+        }
+
+        Connection connection = null;
+        try {
+            Class.forName(driverBD);
+            connection = DriverManager.getConnection(url, user, pass);
+        } catch (Exception e) {
+            throw e;
+        }
+        //String sql = reportDTO.getSql();
 
         // filtramos opcionales
         String sqlWithParameter = filterQueryForOptional(reportDTO);
 
         // creamos lista con parametros que encontramos y filtramos la query
         List parameters = new ArrayList();
-        sqlWithParameter = filterQueryForParameters(reportDTO, sqlWithParameter, parameters);
+        sqlWithParameter = filterQueryForParameters(sqlWithParameter, parameters);
 
         PreparedStatement preparedStatement = connection.prepareStatement(sqlWithParameter);
 
@@ -126,11 +149,17 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
             result.add(map);
         }
 
+        // cerrando db
+        try {
+            resultSet.close();
+            connection.close();
+        } catch (Exception e){}
+
         return result;
     }
 
     private String filterQueryForOptional(ReportDTO reportDTO) {
-        String sql = reportDTO.getSql();
+        String sql = reportDTO.getSql() + "\n";
         String sqlWithParameter = "";
 
         boolean ini = true;
@@ -174,7 +203,7 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
         return sqlWithParameter;
     }
 
-    private String filterQueryForParameters(ReportDTO reportDTO, String sqlWithParameter, List parameters) {
+    private String filterQueryForParameters(String sqlWithParameter, List parameters) {
         String sqlWithParameterTmp = sqlWithParameter;
         String[] sqlP = sqlWithParameter.split("\\$P\\{");
 
@@ -218,7 +247,7 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
         } else if (parameterDTO.getType().equals(ParameterTypeEnum.NUMERIC.getId())) {
             return parameterDTO.getValue() != null;
         } else if (parameterDTO.getType().equals(ParameterTypeEnum.BOOLEAN.getId())) {
-            return parameterDTO.getValue() != null;
+            return parameterDTO.getValue() != null && BooleanUtils.isTrue((Boolean)parameterDTO.getValue());
         } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE_RANGE.getId())) {
             return parameterDTO.getValueR1() != null && parameterDTO.getValueR2() != null;
         }
