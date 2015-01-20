@@ -27,7 +27,7 @@ var Report = {
                 if (index > 0) {
                     var parameterName = parameterNameInit.substring(0, parameterNameInit.length - 5);
                     var maxDate = "";
-                    if (data1 != null && data1.trim() != "") {
+                    if (data1 != null && data1 != "") {
                         maxDate = "+" + data1 + "D";
                     }
 
