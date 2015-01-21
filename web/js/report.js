@@ -58,22 +58,22 @@ var Report = {
             if ($(el).attr("parameterRequired") == 'true') {
                 // validamos los atributos obligatorios
                 if ($(el).attr("parameterType") == PARAMETER_TYPE_ALFANUMERIC) {
-                    if ($(el).val().trim() == "") {
+                    if ($(el).val() == "") {
                         ERROR_MESSAGE.push("Debe ingresar una dato para " + $(el).attr("parameterName"));
                         forward = false;
                     }
                 } else if ($(el).attr("parameterType") == PARAMETER_TYPE_DATE) {
-                    if ($(el).val().trim() == "") {
+                    if ($(el).val() == "") {
                         ERROR_MESSAGE.push("Debe ingresar una fecha para " + $(el).attr("parameterName"));
                         forward = false;
                     }
                 } else if ($(el).attr("parameterType") == PARAMETER_TYPE_NUMERIC) {
-                    if ($(el).val().trim() == "" || isNaN($(el).val().trim())) {
+                    if ($(el).val() == "" || isNaN($(el).val())) {
                         ERROR_MESSAGE.push("Debe ingresar un numero para " + $(el).attr("parameterName"));
                         forward = false;
                     }
                 } else if ($(el).attr("parameterType") == PARAMETER_TYPE_DATE_RANGE) {
-                    if ($(el).val().trim() == "") {
+                    if ($(el).val() == "") {
                         ERROR_MESSAGE.push("Debe ingresar una fecha para el rango " + $(el).attr("parameterName"));
                         forward = false;
                     }
@@ -81,7 +81,7 @@ var Report = {
             } else {
                 // validamos que los datos no obligatorios pero ingresados tengan los formatos correctos
                 if ($(el).attr("parameterType") == PARAMETER_TYPE_NUMERIC) {
-                    if ($(el).val().trim() != "" && isNaN($(el).val().trim())) {
+                    if ($(el).val() != "" && isNaN($(el).val())) {
                         ERROR_MESSAGE.push("Debe ingresar un numero valido para " + $(el).attr("parameterName"));
                         forward = false;
                     }
