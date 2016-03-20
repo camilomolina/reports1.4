@@ -20,7 +20,10 @@ var Report = {
             var data2 = $(el).attr("parameterData2");
 
             if ($(el).attr("parameterType") == PARAMETER_TYPE_DATE) {
-                $(el).datepicker();
+                //dateFormat: "yy-mm-dd"
+                $(el).datepicker({
+                    dateFormat: data2 == 2 ? "mm/yy" : (data2 == 3 ? "yy" : "dd/mm/yy")
+                });
             } else if ($(el).attr("parameterType") == PARAMETER_TYPE_DATE_RANGE) {
                 var parameterNameInit = $(el).attr("id");
                 var index = parameterNameInit.indexOf("_init");
@@ -28,10 +31,11 @@ var Report = {
                     var parameterName = parameterNameInit.substring(0, parameterNameInit.length - 5);
                     var maxDate = "";
                     if (data1 != null && data1 != "") {
-                        maxDate = "+" + data1 + "D";
+                        maxDate = "+" + data1 + "d";
                     }
 
                     $("#"+parameterName+"_init").datepicker({
+                        dateFormat: data2 == 2 ? "mm/yy" : (data2 == 3 ? "yy" : "dd/mm/yy"),
                         maxDate: maxDate,
                         onClose: function(text, obj) {
                             $("#"+parameterName+"_final").datepicker( "option", "minDate", text );
@@ -41,6 +45,7 @@ var Report = {
                         }
                     });
                     $("#"+parameterName+"_final").datepicker({
+                        dateFormat: data2 == 2 ? "mm/yy" : (data2 == 3 ? "yy" : "dd/mm/yy"),
                         maxDate: maxDate,
                         onClose: function(text, obj) {
                             $("#"+parameterName+"_init").datepicker( "option", "maxDate", text );
@@ -96,7 +101,11 @@ var Report = {
             $("#dialogBase64").dialog({
                 title: "Mensaje",
                 modal: true,
-                draggable: false
+                resizable: false,
+                closeOnEscape: false,
+                closeText: false,
+                draggable: false,
+                open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); }
             });
 
             $("#method").val("generateBase64");

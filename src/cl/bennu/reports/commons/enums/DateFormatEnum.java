@@ -8,11 +8,9 @@ import java.util.List;
 public class DateFormatEnum extends ValuedEnum {
 
 
-    public static final DateFormatEnum ALPHANUMERIC = new DateFormatEnum("AlfaNumerico", 1);
-    public static final DateFormatEnum DATE = new DateFormatEnum("Fecha", 2);
-    public static final DateFormatEnum NUMERIC = new DateFormatEnum("Numerico", 3);
-    public static final DateFormatEnum BOOLEAN = new DateFormatEnum("Boleano", 4);
-    public static final DateFormatEnum DATE_RANGE = new DateFormatEnum("Rango de Fechas", 5);
+    public static final DateFormatEnum DDMMYYYY = new DateFormatEnum("dd/MM/yyyy", 1);
+    public static final DateFormatEnum MMYYYY = new DateFormatEnum("MM/yyyy", 2);
+    public static final DateFormatEnum YYYY = new DateFormatEnum("yyyy", 2);
 
     protected DateFormatEnum(String name, int value) {
         super(name, value);

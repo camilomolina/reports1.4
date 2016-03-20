@@ -54,6 +54,9 @@
                             <logic:equal value="2" name="parameter" property="type">
                                 <!--Fecha-->
                                 <input type="text" size="8" name="parameter_<bean:write name="parameter" property="id"/>" id="parameter_<bean:write name="parameter" property="id"/>_id" parameterRequired="<bean:write name="parameter" property="required" />" parameterType="<bean:write name="parameter" property="type" />" parameterName="<bean:write name="parameter" property="name" />" parameterData1="<bean:write name="parameter" property="data1" />" parameterData2="<bean:write name="parameter" property="data2" />" />
+                                <logic:equal name="parameter" property="data2" value="1" >(Dia/Mes/A&ntilde;o)</logic:equal>
+                                <logic:equal name="parameter" property="data2" value="2" >(Mes/A&ntilde;o)</logic:equal>
+                                <logic:equal name="parameter" property="data2" value="3" >(A&ntilde;o)</logic:equal>
                             </logic:equal>
                             <logic:equal value="3" name="parameter" property="type">
                                 <!--Numerico-->
@@ -68,6 +71,9 @@
                                 <input type="text" size="8" name="parameter_<bean:write name="parameter" property="id"/>_init" id="parameter_<bean:write name="parameter" property="id"/>_id_init" parameterRequired="<bean:write name="parameter" property="required" />" parameterType="<bean:write name="parameter" property="type" />" parameterName="<bean:write name="parameter" property="name" />" parameterData1="<bean:write name="parameter" property="data1" />" parameterData2="<bean:write name="parameter" property="data2" />"/>
                                 -
                                 <input type="text" size="8" name="parameter_<bean:write name="parameter" property="id"/>_final" id="parameter_<bean:write name="parameter" property="id"/>_id_final" parameterRequired="<bean:write name="parameter" property="required" />" parameterType="<bean:write name="parameter" property="type" />" parameterName="<bean:write name="parameter" property="name" />"  parameterData1="<bean:write name="parameter" property="data1" />" parameterData2="<bean:write name="parameter" property="data2" />"/>
+                                <logic:equal name="parameter" property="data2" value="1" >(Dia/Mes/A&ntilde;o)</logic:equal>
+                                <logic:equal name="parameter" property="data2" value="2" >(Mes/A&ntilde;o)</logic:equal>
+                                <logic:equal name="parameter" property="data2" value="3" >(A&ntilde;o)</logic:equal>
                             </logic:equal>
                         </td>
                     </tr>

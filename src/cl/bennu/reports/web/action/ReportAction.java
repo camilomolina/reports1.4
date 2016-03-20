@@ -4,6 +4,7 @@ import cl.bennu.reports.commons.dto.ParameterDTO;
 import cl.bennu.reports.commons.dto.ReportDTO;
 import cl.bennu.reports.commons.dto.base.BaseDTO;
 import cl.bennu.reports.commons.dto.base.ResponseJSON;
+import cl.bennu.reports.commons.enums.DateFormatEnum;
 import cl.bennu.reports.commons.enums.ParameterTypeEnum;
 import cl.bennu.reports.web.delegate.DynamicReportDelegate;
 import cl.bennu.reports.web.form.ReportForm;
@@ -37,6 +38,8 @@ public class ReportAction extends BaseAction {
         ReportDTO reportDTO = DynamicReportDelegate.getInstance().getReport(buildContext(request), reportForm.getReport());
 
         request.getSession().setAttribute("SESSION_Report", reportDTO);
+        //request.getSession().removeAttribute("SESSION_ReportGenerate");
+
         return mapping.findForward(START_REPORT);
     }
 
@@ -46,7 +49,10 @@ public class ReportAction extends BaseAction {
         StringBuffer messages = new StringBuffer();
         boolean generate = true;
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+        //SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MM/yyyy");
+        //SimpleDateFormat simpleDateFormat3 = new SimpleDateFormat("yyyy");
+
         Iterator parameterIter = IteratorUtils.getIterator(reportDTO.getParameterList());
         while(parameterIter.hasNext()) {
             ParameterDTO parameterDTO = (ParameterDTO) parameterIter.next();
@@ -59,7 +65,13 @@ public class ReportAction extends BaseAction {
                 parameterDTO.setValue(val);
             } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE.getId())) {
                 if (!val.trim().equals("")) {
-                    parameterDTO.setValue(simpleDateFormat.parse(val));
+                    if (DateFormatEnum.MMYYYY.getId().toString().equals(parameterDTO.getData2())) {
+                        parameterDTO.setValue(simpleDateFormat1.parse("01/"+val));
+                    } else if (DateFormatEnum.YYYY.getId().toString().equals(parameterDTO.getData2())) {
+                        parameterDTO.setValue(simpleDateFormat1.parse("01/01/"+val));
+                    } else {
+                        parameterDTO.setValue(simpleDateFormat1.parse(val));
+                    }
                 }
             } else if (parameterDTO.getType().equals(ParameterTypeEnum.NUMERIC.getId())) {
                 if (!val.trim().equals("")) {
@@ -71,11 +83,23 @@ public class ReportAction extends BaseAction {
                 Date date1 = null;
                 Date date2 = null;
                 if (!valR1.trim().equals("")) {
-                    date1 = simpleDateFormat.parse(valR1);
+                    if (DateFormatEnum.MMYYYY.getId().toString().equals(parameterDTO.getData2())) {
+                        date1 = simpleDateFormat1.parse("01/"+valR1);
+                    } else if (DateFormatEnum.YYYY.getId().toString().equals(parameterDTO.getData2())) {
+                        date1 = simpleDateFormat1.parse("01/01/"+valR1);
+                    } else {
+                        date1 = simpleDateFormat1.parse(valR1);
+                    }
                     parameterDTO.setValueR1(date1);
                 }
                 if (!valR2.trim().equals("")) {
-                    date2 = simpleDateFormat.parse(valR2);
+                    if (DateFormatEnum.MMYYYY.getId().toString().equals(parameterDTO.getData2())) {
+                        date2 = simpleDateFormat1.parse("01/"+valR2);
+                    } else if (DateFormatEnum.YYYY.getId().toString().equals(parameterDTO.getData2())) {
+                        date2 = simpleDateFormat1.parse("01/01/"+valR2);
+                    } else {
+                        date2 = simpleDateFormat1.parse(valR2);
+                    }
                     parameterDTO.setValueR2(date2);
                 }
 

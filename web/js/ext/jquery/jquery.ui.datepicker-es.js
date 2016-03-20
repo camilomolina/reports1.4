@@ -1,7 +1,7 @@
 $.datepicker.regional['es'] = {
     closeText: 'Cerrar',
-    prevText: '<Ant',
-    nextText: 'Sig>',
+    prevText: 'Anterior',
+    nextText: 'Siguiente',
     currentText: 'Hoy',
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
     monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
@@ -14,8 +14,8 @@ $.datepicker.regional['es'] = {
     isRTL: false,
     showMonthAfterYear: false,
     yearSuffix: '',
-    changeMonth: true,
-    changeYear: true,
+    changeMonth: false,
+    changeYear: false,
     showWeek: true
 };
 $.datepicker.setDefaults($.datepicker.regional['es']);
