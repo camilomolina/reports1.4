@@ -25,8 +25,6 @@
         <pathelement location="lib/json-lib-2.3-jdk13.jar" />
         <pathelement location="lib/ezmorph-1.0.6.jar" />
 
-        
-
         <pathelement location="${env.JBOSS_HOME}/server/default/lib/javax.servlet.jar" />
         <pathelement location="${env.JBOSS_HOME}/server/default/lib/javax.servlet.jsp.jar" />
     </path>
@@ -78,16 +76,11 @@
         <copy todir="dist" file="build/reports14.war" />
     </target>
 
-    <target name="ear" depends="war">
-        <echo message="Generando EAR"/>
-
-        <ear compress="false" destfile="build/reports14.ear" appxml="" />
-    </target>
-
     <target name="clean">
         <delete failonerror="false" includeemptydirs="true">
             <fileset dir="build/" />
         </delete>
+        <delete dir="docker/artefacts" />
     </target>
 
     <target name="deployJBoss" depends="war">
@@ -105,5 +98,8 @@
         <javadoc sourcepath="src" destdir="build/javadoc" packagenames="*" classpathref="project.class.path"/>
     </target>
 
+    <target name="docker" depends="clean,war">
+        <copy todir="docker/artefacts" file="build/reports14.war"/>
+    </target>
 
 </project>

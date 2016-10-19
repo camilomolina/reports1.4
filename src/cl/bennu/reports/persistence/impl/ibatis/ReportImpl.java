@@ -121,6 +121,8 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
             i++;
         }
 
+        System.out.println(sqlWithParameter);
+
         ResultSet resultSet = preparedStatement.executeQuery();
         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
