@@ -13,6 +13,7 @@ public class ParameterTypeEnum extends ValuedEnum {
     public static final ParameterTypeEnum NUMERIC = new ParameterTypeEnum("Numerico", 3);
     public static final ParameterTypeEnum BOOLEAN = new ParameterTypeEnum("Boleano", 4);
     public static final ParameterTypeEnum DATE_RANGE = new ParameterTypeEnum("Rango de Fechas", 5);
+    public static final ParameterTypeEnum ALPHANUMERIC_PLUS_LIKE = new ParameterTypeEnum("AlfaNumerico+Like", 6);
 
     protected ParameterTypeEnum(String name, int value) {
         super(name, value);

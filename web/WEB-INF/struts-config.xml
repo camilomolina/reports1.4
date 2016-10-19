@@ -31,10 +31,9 @@
                 name="maintainerReportsForm"
                 type="cl.bennu.reports.web.action.MaintainerReportsAction"
                 parameter="method">
-            <forward name="startMaintainerReportsOld" path="/jsp/maintainerReportsOld.jsp"/>
             <forward name="startMaintainerReports" path="/jsp/maintainerReports.jsp"/>
-            <forward name="success_list" path="/jsp/jspf/parametersList.jsp"/>
-            <forward name="success_report" path="/jsp/jspf/reportsList.jsp"/>
+            <forward name="parametersList" path="/jsp/jspf/parametersList.jsp"/>
+            <forward name="reportList" path="/jsp/jspf/reportsList.jsp"/>
         </action>
     </action-mappings>
 

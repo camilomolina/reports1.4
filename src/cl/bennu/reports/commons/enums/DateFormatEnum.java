@@ -10,7 +10,7 @@ public class DateFormatEnum extends ValuedEnum {
 
     public static final DateFormatEnum DDMMYYYY = new DateFormatEnum("dd/MM/yyyy", 1);
     public static final DateFormatEnum MMYYYY = new DateFormatEnum("MM/yyyy", 2);
-    public static final DateFormatEnum YYYY = new DateFormatEnum("yyyy", 2);
+    public static final DateFormatEnum YYYY = new DateFormatEnum("yyyy", 3);
 
     protected DateFormatEnum(String name, int value) {
         super(name, value);

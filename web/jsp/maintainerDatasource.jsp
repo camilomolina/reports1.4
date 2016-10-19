@@ -54,7 +54,7 @@
                 <tr>
                     <td>URL</td>
                     <td>
-                        <html:text property="url" styleId="url" title="Debe ingresar una conexion de base de datos" size="80" />
+                        <html:text property="url" styleId="url" title="Debe ingresar una conexion de base de datos" size="60" />
                     </td>
                 </tr>
                 <tr>

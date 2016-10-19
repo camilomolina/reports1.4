@@ -22,10 +22,10 @@
                 <td><bean:write name="dtoReportList" property="areaId"/></td>
                 <td align="center" class="acciones">
                     <img src="/reports14/img/pencil.gif" alt="Editar" title="Edita el reporte" style="cursor:pointer;"
-                         onclick="MaintainerReports.editReport(<bean:write name="dtoReportList" property="id"/>)"/>
+                         onclick="MaintainerReports.get(<bean:write name="dtoReportList" property="id"/>)"/>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <img src="/reports14/img/icono_cancelar.gif" alt="Eliminar" title="Elimina el reporte"
-                         onclick="MaintainerReports.delReport(<bean:write name="dtoReportList" property="id"/>)"
+                         onclick="MaintainerReports.delete(<bean:write name="dtoReportList" property="id"/>)"
                          style="cursor:pointer;"/>
                 </td>
             </tr>

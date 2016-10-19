@@ -61,9 +61,10 @@ public class ReportAction extends BaseAction {
             String valR1 = request.getParameter("parameter_"+parameterDTO.getId()+"_init");
             String valR2 = request.getParameter("parameter_"+parameterDTO.getId()+"_final");
 
-            if (parameterDTO.getType().equals(ParameterTypeEnum.ALPHANUMERIC.getId())) {
+            if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC)
+                    || parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC_PLUS_LIKE)) {
                 parameterDTO.setValue(val);
-            } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE.getId())) {
+            } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE)) {
                 if (!val.trim().equals("")) {
                     if (DateFormatEnum.MMYYYY.getId().toString().equals(parameterDTO.getData2())) {
                         parameterDTO.setValue(simpleDateFormat1.parse("01/"+val));
@@ -73,13 +74,13 @@ public class ReportAction extends BaseAction {
                         parameterDTO.setValue(simpleDateFormat1.parse(val));
                     }
                 }
-            } else if (parameterDTO.getType().equals(ParameterTypeEnum.NUMERIC.getId())) {
+            } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.NUMERIC)) {
                 if (!val.trim().equals("")) {
                     parameterDTO.setValue(new Long(val));
                 }
-            } else if (parameterDTO.getType().equals(ParameterTypeEnum.BOOLEAN.getId())) {
+            } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.BOOLEAN)) {
                 parameterDTO.setValue(val == null ? Boolean.FALSE : Boolean.TRUE);
-            } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE_RANGE.getId())) {
+            } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE_RANGE)) {
                 Date date1 = null;
                 Date date2 = null;
                 if (!valR1.trim().equals("")) {

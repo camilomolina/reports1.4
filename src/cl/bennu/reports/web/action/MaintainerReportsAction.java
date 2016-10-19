@@ -3,6 +3,7 @@ package cl.bennu.reports.web.action;
 
 import cl.bennu.reports.commons.dto.ParameterDTO;
 import cl.bennu.reports.commons.dto.ReportDTO;
+import cl.bennu.reports.commons.enums.DateFormatEnum;
 import cl.bennu.reports.commons.enums.ParameterTypeEnum;
 import cl.bennu.reports.web.delegate.DynamicReportDelegate;
 import cl.bennu.reports.web.form.MaintainerReportsForm;
@@ -28,6 +29,8 @@ import java.util.List;
 public class MaintainerReportsAction extends BaseAction {
 
     private static final String START_MAINTAINER_REPORT = "startMaintainerReports";
+    private static final String PARAMETER_LIST = "parametersList";
+    private static final String REPORT_LIST = "reportList";
 
 
     public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -40,14 +43,16 @@ public class MaintainerReportsAction extends BaseAction {
         List enumList = ParameterTypeEnum.getEnumList();
         maintainerReportsForm.setParameterTypeList(enumList);
 
+        List dateFormatList = DateFormatEnum.getEnumList();
+        maintainerReportsForm.setDateFormatList(dateFormatList);
+
         List conexionList = DynamicReportDelegate.getInstance().getAllConexionSummary(buildContext(request));
         maintainerReportsForm.setConexionList(conexionList);
 
         List reportsList = DynamicReportDelegate.getInstance().getAllReport(buildContext(request));
         request.setAttribute("reportsList", reportsList);
 
-        HttpSession httpSession = request.getSession();
-        httpSession.removeAttribute("PARAMETERS_LIST");
+        request.getSession().removeAttribute("PARAMETERS_LIST");
 
         //Se setean los valores de reportes
         maintainerReportsForm.setReportId(null);
@@ -66,75 +71,42 @@ public class MaintainerReportsAction extends BaseAction {
     }
 
     public ActionForward cleanTableParameter(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         HttpSession httpSession = request.getSession();
-        List parametersList = (List) httpSession.getAttribute("PARAMETERS_LIST");
-        parametersList.clear();
-        httpSession.setAttribute("PARAMETERS_LIST", parametersList);
+        httpSession.removeAttribute("PARAMETERS_LIST");
 
-        System.out.println("Se limpio la tabla de parametros");
-        return mapping.findForward("success_list");
-
+        return mapping.findForward(PARAMETER_LIST);
     }
 
     public ActionForward addParameter(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
+        HttpSession httpSession = request.getSession();
 
-        //METODOS PARA INGRESAR DATOS
         ParameterDTO parameterDTO = new ParameterDTO();
-        System.out.println("Este es el indice: " + maintainerReportsForm.getParameterId());
         parameterDTO.setName(maintainerReportsForm.getParameterName());
-        parameterDTO.setTypeName(maintainerReportsForm.getParameterTypeName());
-        parameterDTO.setType(maintainerReportsForm.getParameterTypeId());
+        parameterDTO.setParameterTypeEnum(ParameterTypeEnum.valueOf(maintainerReportsForm.getParameterTypeId()));
         parameterDTO.setRequired(maintainerReportsForm.getParameterRequired());
-        System.out.println("Este es el tipo " + maintainerReportsForm.getParameterTypeName());
-        parameterDTO.setLike(Boolean.FALSE);
-
+        parameterDTO.setData2(maintainerReportsForm.getDateFormatId() == null ? null : maintainerReportsForm.getDateFormatId().toString());
 
         if (maintainerReportsForm.getParameterId() == null) {
-
-            HttpSession httpSession = request.getSession();
             List parametersList = (List) httpSession.getAttribute("PARAMETERS_LIST");
             if (parametersList == null) parametersList = new ArrayList();
-            System.out.println("Esta es la lista" + parametersList);
             parametersList.add(parameterDTO);
 
             httpSession.setAttribute("PARAMETERS_LIST", parametersList);
 
             maintainerReportsForm.setParameterId(null);
-
-            System.out.println("Estoy agregando los parametros");
-
         } else {
-            HttpSession httpSession = request.getSession();
             List parametersList = (List) httpSession.getAttribute("PARAMETERS_LIST");
             parametersList.set(maintainerReportsForm.getParameterId().intValue(), parameterDTO);
 
             maintainerReportsForm.setParameterId(null);
-
-            System.out.println("Edite los parametros");
         }
 
-
-        return mapping.findForward("success_list");
+        return mapping.findForward(PARAMETER_LIST);
     }
 
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
-
-        System.out.println(maintainerReportsForm.getName());
-        System.out.println(maintainerReportsForm.getAreaId());
-        System.out.println(maintainerReportsForm.getSqlDescription());
-        System.out.println(maintainerReportsForm.getSqlText());
-
-        //llamo a metodos para guardar en db
-
-       /*SE REVISA EL selectAllReporte
-        List li = DynamicReportDelegate.getInstance().getAllReport();
-        ReportDTO reporteDTO = (ReportDTO) li.get(0);
-
-        System.out.println("El nombre del primer reporte es: " + reporteDTO.getName());
-        */
 
         ReportDTO reportDTO = new ReportDTO();
         reportDTO.setName(maintainerReportsForm.getName());
@@ -152,102 +124,86 @@ public class MaintainerReportsAction extends BaseAction {
 
         DynamicReportDelegate.getInstance().saveReport(buildContext(request), reportDTO);
 
-
-        System.out.println("Guarde el reporte");
-
-
-        //return mapping.findForward("success");
-        return mapping.findForward(START_MAINTAINER_REPORT);
+        //return mapping.findForward(START_MAINTAINER_REPORT);
+        return unspecified(mapping, form, request, response);
     }
 
-    public ActionForward delParameter(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        MaintainerReportsForm formulario = (MaintainerReportsForm) form;
-
+    public ActionForward deleteParameter(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
 
         HttpSession httpSession = request.getSession();
         List parametersList = (List) httpSession.getAttribute("PARAMETERS_LIST");
 
-        parametersList.remove(formulario.getParameterId().intValue());
+        parametersList.remove(maintainerReportsForm.getParameterId().intValue());
 
         httpSession.setAttribute("PARAMETERS_LIST", parametersList);
 
-        formulario.setParameterId(null);
+        maintainerReportsForm.setParameterId(null);
 
-        //System.out.println("Borre el parametro");
-
-        return mapping.findForward("success_list");
+        return mapping.findForward(PARAMETER_LIST);
     }
 
-    public void editParameter(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        MaintainerReportsForm formulario = (MaintainerReportsForm) form;
+    public void getParameter(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
 
-        HttpSession httpSession = request.getSession();
-        List parametersList = (List) httpSession.getAttribute("PARAMETERS_LIST");
+        List parametersList = (List) request.getSession().getAttribute("PARAMETERS_LIST");
 
-        ParameterDTO parameterDTO;
-        parameterDTO = (ParameterDTO) parametersList.get(formulario.getParameterId().intValue());
-
+        ParameterDTO parameterDTO = (ParameterDTO) parametersList.get(maintainerReportsForm.getParameterId().intValue());
 
         JSONObject jsonObject = JSONObject.fromObject(parameterDTO);
         ServletOutputStream servletOutputStream = response.getOutputStream();
         servletOutputStream.write(jsonObject.toString().getBytes());
-
     }
 
-    public ActionForward refresh (ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return mapping.findForward("success_list");
+    public ActionForward parameterList(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
+
+        return mapping.findForward(PARAMETER_LIST);
     }
 
-    public ActionForward refreshReport (ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+    public ActionForward refreshReport(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
 
         List reportsList = DynamicReportDelegate.getInstance().getAllReport(buildContext(request));
-        //maintainerReportsForm.setReportsList(reportsList);
         request.setAttribute("reportsList", reportsList);
 
-        return mapping.findForward("success_report");
+        return mapping.findForward(REPORT_LIST);
     }
 
-    public ActionForward delReport (ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
 
         DynamicReportDelegate.getInstance().deleteReport(buildContext(request), maintainerReportsForm.getReportId());
 
-        return mapping.findForward("succes_report");
+        return mapping.findForward(REPORT_LIST);
     }
 
-    public void editReport (ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void get(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
 
         ReportDTO reportDTO = DynamicReportDelegate.getInstance().getReportById(buildContext(request), maintainerReportsForm.getReportId());
 
         //Se agregan los parametros del reporte
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute("PARAMETERS_LIST",reportDTO.getParameterList());
+        httpSession.setAttribute("PARAMETERS_LIST", reportDTO.getParameterList());
 
         JSONObject jsonObject = JSONObject.fromObject(reportDTO);
         ServletOutputStream servletOutputStream = response.getOutputStream();
         servletOutputStream.write(jsonObject.toString().getBytes());
-
-        System.out.println("Estoy editando el reporte");
-
-        //return mapping.findForward("success_report");
-        //return null;
     }
 
-    public ActionForward clean (ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+    public ActionForward clean(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         try {
             MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
 
-            ((MaintainerReportsForm) form).setReportId(null);
-            ((MaintainerReportsForm) form).setAreaId(null);
-            ((MaintainerReportsForm) form).setConexionId(null);
-            ((MaintainerReportsForm) form).setSqlDescription(null);
-            ((MaintainerReportsForm) form).setSqlText(null);
-            ((MaintainerReportsForm) form).setParameterId(null);
-
-        }catch (Exception e){
+            maintainerReportsForm.setReportId(null);
+            maintainerReportsForm.setAreaId(null);
+            maintainerReportsForm.setConexionId(null);
+            maintainerReportsForm.setSqlDescription(null);
+            maintainerReportsForm.setSqlText(null);
+            maintainerReportsForm.setParameterId(null);
+        } catch (Exception e) {
             System.out.println("No se pudo limpiar el formulario");
         }
 

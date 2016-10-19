@@ -49,6 +49,7 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
     }
 
     public List execute(ReportDTO reportDTO, ConexionDTO conexionDTO) throws Exception {
+        System.out.println("-- REPORTS14 -- : Ejecutando reporte " + reportDTO.getDescription());
 
         String driverBD = "";
         String url = conexionDTO.getUrl();
@@ -99,22 +100,17 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
                 ParameterDTO parameterDTO = (ParameterDTO) parameterReportIter.next();
 
                 if (parameter.equalsIgnoreCase(parameterDTO.getName())) {
-                    if (parameterDTO.getType().equals(ParameterTypeEnum.ALPHANUMERIC.getId())) {
-                        String param;
-                        if (BooleanUtils.isTrue(parameterDTO.getLike())) {
-                            param = "%" + parameterDTO.getValue().toString() + "%";
-                        } else {
-                            param = parameterDTO.getValue().toString();
-                        }
-
-                        preparedStatement.setString(i, param);
-                    } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE.getId())) {
+                    if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC)) {
+                        preparedStatement.setString(i, parameterDTO.getValue().toString());
+                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC_PLUS_LIKE)) {
+                        preparedStatement.setString(i, "%" + parameterDTO.getValue().toString() + "%");
+                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE)) {
                         preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValue()).getTime()));
-                    } else if (parameterDTO.getType().equals(ParameterTypeEnum.NUMERIC.getId())) {
+                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.NUMERIC)) {
                         preparedStatement.setLong(i, Long.parseLong(parameterDTO.getValue().toString()));
-                    } else if (parameterDTO.getType().equals(ParameterTypeEnum.BOOLEAN.getId())) {
+                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.BOOLEAN)) {
                         preparedStatement.setBoolean(i, ((Boolean) parameterDTO.getValue()).booleanValue());
-                    } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE_RANGE.getId())) {
+                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE_RANGE)) {
                         preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR1()).getTime()));
                         i++;
                         preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR2()).getTime()));
@@ -127,6 +123,8 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
 
         ResultSet resultSet = preparedStatement.executeQuery();
         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+
+        System.out.println("-- REPORTS14 -- : Termino de ejecucion " + reportDTO.getDescription());
 
         List result = new ArrayList();
 
@@ -154,6 +152,8 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
             resultSet.close();
             connection.close();
         } catch (Exception e){}
+
+        System.out.println("-- REPORTS14 -- : Cierra conexion DB " + conexionDTO.getName());
 
         return result;
     }
@@ -214,7 +214,6 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
             int top = s.indexOf("}");
             if (top != -1) {
                 // parametro encontrado
-                System.out.println(s.substring(0, top));
                 sqlWithParameter += s.substring(top + 1, s.length()) + "? ";
 
                 // lista de parametros para luego cambiarlas por los valores ingresados en el formulario
@@ -240,15 +239,17 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
     }
 
     private boolean withData(ParameterDTO parameterDTO) {
-        if (parameterDTO.getType().equals(ParameterTypeEnum.ALPHANUMERIC.getId())) {
+        if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC)) {
             return parameterDTO.getValue() != null && !StringUtils.isBlank(parameterDTO.getValue().toString());
-        } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE.getId())) {
+        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC_PLUS_LIKE)) {
+            return parameterDTO.getValue() != null && !StringUtils.isBlank(parameterDTO.getValue().toString());
+        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE)) {
             return parameterDTO.getValue() != null;
-        } else if (parameterDTO.getType().equals(ParameterTypeEnum.NUMERIC.getId())) {
+        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.NUMERIC)) {
             return parameterDTO.getValue() != null;
-        } else if (parameterDTO.getType().equals(ParameterTypeEnum.BOOLEAN.getId())) {
+        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.BOOLEAN)) {
             return parameterDTO.getValue() != null && BooleanUtils.isTrue((Boolean)parameterDTO.getValue());
-        } else if (parameterDTO.getType().equals(ParameterTypeEnum.DATE_RANGE.getId())) {
+        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE_RANGE)) {
             return parameterDTO.getValueR1() != null && parameterDTO.getValueR2() != null;
         }
 

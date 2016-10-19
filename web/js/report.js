@@ -7,6 +7,7 @@ var PARAMETER_TYPE_DATE = 2;
 var PARAMETER_TYPE_NUMERIC = 3;
 var PARAMETER_TYPE_BOOLEAN = 4;
 var PARAMETER_TYPE_DATE_RANGE = 5;
+var PARAMETER_TYPE_ALFANUMERIC_PLUS_LIKE = 6;
 
 var ERROR_MESSAGE = [];
 var Report = {
@@ -62,7 +63,7 @@ var Report = {
         $("input[id^='parameter_']").each(function (i, el) {
             if ($(el).attr("parameterRequired") == 'true') {
                 // validamos los atributos obligatorios
-                if ($(el).attr("parameterType") == PARAMETER_TYPE_ALFANUMERIC) {
+                if ($(el).attr("parameterType") == PARAMETER_TYPE_ALFANUMERIC || $(el).attr("parameterType") == PARAMETER_TYPE_ALFANUMERIC_PLUS_LIKE) {
                     if ($(el).val() == "") {
                         ERROR_MESSAGE.push("Debe ingresar una dato para " + $(el).attr("parameterName"));
                         forward = false;

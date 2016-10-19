@@ -1,6 +1,7 @@
 package cl.bennu.reports.commons.dto;
 
 import cl.bennu.reports.commons.dto.base.BaseDTO;
+import cl.bennu.reports.commons.enums.ParameterTypeEnum;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,10 +13,8 @@ public class ParameterDTO extends BaseDTO {
 
     private Long reportId;
     private String name;
-    private Long type;
-    private String typeName;
+    private ParameterTypeEnum parameterTypeEnum;
     private Boolean required;
-    private Boolean like;
 
     private String data1;
     private String data2;
@@ -57,14 +56,6 @@ public class ParameterDTO extends BaseDTO {
         this.valueR2 = valueR2;
     }
 
-    public Boolean getLike() {
-        return like;
-    }
-
-    public void setLike(Boolean like) {
-        this.like = like;
-    }
-
     public Object getValue() {
         return value;
     }
@@ -81,12 +72,12 @@ public class ParameterDTO extends BaseDTO {
         this.name = name;
     }
 
-    public Long getType() {
-        return type;
+    public ParameterTypeEnum getParameterTypeEnum() {
+        return parameterTypeEnum;
     }
 
-    public void setType(Long type) {
-        this.type = type;
+    public void setParameterTypeEnum(ParameterTypeEnum parameterTypeEnum) {
+        this.parameterTypeEnum = parameterTypeEnum;
     }
 
     public Boolean getRequired() {
@@ -105,11 +96,4 @@ public class ParameterDTO extends BaseDTO {
         this.reportId = idReport;
     }
 
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
 }

@@ -14,9 +14,7 @@
         <logic:iterate id="dtoParameters" name="PARAMETERS_LIST" scope="session" indexId="index" >
             <tr>
                 <td><bean:write name="dtoParameters" property="name" /></td>
-                <td><bean:write name="dtoParameters" property="typeName" /></td>
-                    <%-- Se comenta para dejar nominales "Si" y "No" en vez de true o false
-                    <td><bean:write name="dtoParameters" property="required" /></td> --%>
+                <td><bean:write name="dtoParameters" property="parameterTypeEnum.name" /></td>
                 <td>
                     <logic:equal value="true" property="required" name="dtoParameters">
                         <p>Si</p>
@@ -27,10 +25,10 @@
                 </td>
                 <td align="center" class="acciones">
                     <img src="/reports14/img/pencil.gif" alt="Editar" title="Edita el parametro" style="cursor:pointer;"
-                         onclick="MaintainerReports.editParameter(<bean:write name="index"/>);"/>
+                         onclick="MaintainerReports.getParameter(<bean:write name="index"/>);"/>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <img src="/reports14/img/icono_cancelar.gif" alt="Eliminar" title="Elimina el parametro"
-                         onclick="MaintainerReports.delParameter(<bean:write name="index"/>);"
+                         onclick="MaintainerReports.deleteParameter(<bean:write name="index"/>);"
                          style="cursor:pointer;"/>
                 </td>
             </tr>

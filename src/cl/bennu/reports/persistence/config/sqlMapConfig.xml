@@ -15,6 +15,10 @@
         </dataSource>
     </transactionManager>
   -->
+    <typeAlias alias="parameterTypeHandler" type="cl.bennu.reports.persistence.handler.ParameterTypeHandler"/>
+    <typeHandler javaType="cl.bennu.reports.commons.enums.ParameterTypeEnum" callback="parameterTypeHandler"/>
+
+
     <transactionManager type="EXTERNAL">
         <property name="DefaultAutoCommit" value="false"/>
         <property name="SetAutoCommitAllowed" value="false"/>

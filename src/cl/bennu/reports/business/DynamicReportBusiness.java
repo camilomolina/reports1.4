@@ -189,7 +189,6 @@ public class DynamicReportBusiness {
             if (reportDTO.getId() != null){parameterDAO.deleteByReportId(id);}
 
             Iterator iter = IteratorUtils.getIterator(reportDTO.getParameterList());
-
             ParameterDTO parameterDTO = null;
             while (iter.hasNext()) {
                 parameterDTO = (ParameterDTO) iter.next();
@@ -202,14 +201,8 @@ public class DynamicReportBusiness {
                 }
                 parameterDTO.setUpdate(new Date());
                 parameterDTO.setUpdateUser(contextDTO.getUser());
-                //if (reportDTO.getId() != null) {
-                    //saveParameter(contextDTO, parameterDTO);
-                    //updateParameter(contextDTO, parameterDTO);
-                    //parameterDAO.update(parameterDTO);
-                //    saveParameter(contextDTO, parameterDTO);
-                //} else {
-                    saveParameter(contextDTO, parameterDTO);
-                //}
+
+                saveParameter(contextDTO, parameterDTO);
             }
         } catch (Exception e){
             System.out.println("No se pudo ingresar el parametro");
@@ -221,19 +214,7 @@ public class DynamicReportBusiness {
     }
 
     public ReportDTO getReportById(ContextDTO contextDTO, Long reportId) throws Exception {
-        //return reportDAO.getById(reportId);
-        ReportDTO reportDTO = reportDAO.getById(reportId);
-
-        Iterator iter = reportDTO.getParameterList().iterator();
-        //The parameter type is added
-        while (iter.hasNext()){
-            ParameterDTO parameterDTO = (ParameterDTO) iter.next();
-            ParameterTypeEnum parameterTypeEnum = (ParameterTypeEnum) ParameterTypeEnum.getEnumList().get((parameterDTO.getType().intValue()-1));
-            parameterDTO.setTypeName(parameterTypeEnum.getEnumName());
-        }
-
-
-        return reportDTO;
+        return reportDAO.getById(reportId);
     }
 
     public void deleteReport(ContextDTO contextDTO, Long reporteId) throws Exception {

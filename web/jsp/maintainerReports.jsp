@@ -88,14 +88,26 @@
                             </td>
                             <td>Tipo</td>
                             <td>
-                                <html:select property="parameterTypeId" styleId="parameterTypeId" title="Tipo del parametro">
+                                <html:select property="parameterTypeId" styleId="parameterTypeId" title="Tipo del parametro" onchange="MaintainerReports.checkParameterType(true);">
                                     <html:option value="-1">Seleccione un tipo</html:option>
                                     <logic:notEmpty name="maintainerReportsForm" property="parameterTypeList">
-
                                         <logic:iterate id="dtoParameters" name="maintainerReportsForm" property="parameterTypeList">
                                             <option  value="<bean:write name="dtoParameters" property="id"/>"><bean:write name="dtoParameters" property="name"/></option>
                                         </logic:iterate>
-
+                                    </logic:notEmpty>
+                                </html:select>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Formato</td>
+                            <td>
+                                <html:select property="dateFormatId" styleId="dateFormatId" title="Formato de fecha" disabled="true">
+                                    <html:option value="-1">Seleccione un tipo</html:option>
+                                    <logic:notEmpty name="maintainerReportsForm" property="dateFormatList">
+                                        <logic:iterate id="row" name="maintainerReportsForm" property="dateFormatList">
+                                            <option  value="<bean:write name="row" property="id"/>"><bean:write name="row" property="name"/></option>
+                                        </logic:iterate>
                                     </logic:notEmpty>
                                 </html:select>
                             </td>
@@ -122,7 +134,7 @@
                                     <table>
                                         <tr>
                                             <td>
-                                                <input type="button" value="Agregar" id="add" class="Boton" onclick="MaintainerReports.saveReport();"/>
+                                                <input type="button" value="Agregar" id="add" class="Boton" onclick="MaintainerReports.save();"/>
                                             </td>
                                             <td>
                                                 <input type="button" value="Limpiar" id="clean" class="Boton" onclick="MaintainerReports.clean();"/>

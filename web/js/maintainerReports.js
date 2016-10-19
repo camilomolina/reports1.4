@@ -7,62 +7,66 @@ var ERROR_MESSAGE = ["Debe ingresar los siguientes datos"];
 
 var MaintainerReports = {
     init: function () {
-       // $("#body").show();
+        // $("#body").show();
         $("#tabs").tabs();
         $("input[type=button]").button().click(function (event) {
             event.preventDefault();
         });
     },
-
-    validateParameter: function(){
+    validateParameter: function () {
         var forward = true;
         ERROR_MESSAGE = [];
 
-        if ($("#parameterName").val()==""){
+        if ($("#parameterName").val() == "") {
             ERROR_MESSAGE.push("Debe ingresar nombre del parametro");
             forward = false;
         }
-        if ($("#parameterTypeId").val()==-1){
+        if ($("#parameterTypeId").val() == -1) {
             ERROR_MESSAGE.push("Debe ingresar tipo del parametro");
             forward = false;
         }
 
+        if (MaintainerReports.checkParameterType(false)) {
+            if ($("#dateFormatId").val() == -1) {
+                ERROR_MESSAGE.push("Debe ingresar formato del parametro");
+                forward = false;
+            }
+        }
+
         return forward;
     },
-
-    validateReport: function() {
+    validateReport: function () {
         var forward = true;
         ERROR_MESSAGE = [];
 
-        if ($("#name").val()==""){
+        if ($("#name").val() == "") {
             ERROR_MESSAGE.push("Debe ingresar nombre del reporte");
             forward = false;
         }
 
-        if ($("#conexionId").val()==-1){
+        if ($("#conexionId").val() == -1) {
             ERROR_MESSAGE.push("Debe ingresar una conexi&oacute;");
             forward = false;
         }
 
-        if ($("#areaId").val()==-1){
+        if ($("#areaId").val() == -1) {
             ERROR_MESSAGE.push("Debe ingresar el &aacute;rea");
             forward = false;
         }
 
-        if ($("#sqlDescription").val()==""){
+        if ($("#sqlDescription").val() == "") {
             ERROR_MESSAGE.push("Debe ingresar descripci&oacute;n");
             forward = false;
         }
 
-        if ($("#sqlText").val()==""){
+        if ($("#sqlText").val() == "") {
             ERROR_MESSAGE.push("Debe ingresar el script");
             forward = false;
         }
 
         return forward;
     },
-
-    clean: function(){
+    clean: function () {
         $("#name").val("");
         $("#conexionId").val(-1);
         $("#areaId").val(-1);
@@ -70,224 +74,236 @@ var MaintainerReports = {
         $("#sqlText").val("");
         $("#parameterName").val("");
         $("#parameterTypeId").val(-1);
-        $("#parameterRequired").prop("checked",false);
+        $("#parameterRequired").prop("checked", false);
+        $("#dateFormatId").val(-1);
 
         $.ajax({
-            url:"/reports14/maintainerReports.do"
+            url: "/reports14/maintainerReports.do"
             , method: "POST"
             , data: "method=clean"
             , dataType: "html"
-            , success: function(html){
+            , success: function (html) {
                 MaintainerReports.cleanTableParameter();
             }
-            , error: function(){
+            , error: function () {
                 alert("No he podido limpiar todo");
             }
         });
     },
-
-    cleanParameter: function(){
+    cleanParameter: function () {
         $("#parameterName").val("");
         $("#parameterTypeId").val(-1);
-        $("#parameterRequired").prop("checked",false);
+        $("#dateFormatId").val(-1);
+        $("#parameterRequired").prop("checked", false);
     },
-
-    cleanTableParameter: function(){
+    cleanTableParameter: function () {
         $.ajax({
-            url:"/reports14/maintainerReports.do"
-            , method:"POST"
+            url: "/reports14/maintainerReports.do"
+            , method: "POST"
             , data: "method=cleanTableParameter"
             , dataType: "html"
-            , success: function(html){
-                MaintainerReports.refresh();
+            , success: function (html) {
+                $("#tableParameters").html(html);
             }
-            , error: function(){
+            , error: function () {
                 alert("No pude actualizar la tabla de parametros");
             }
         });
     },
-
-    addParameter: function(){
-        if (MaintainerReports.validateParameter()){
+    addParameter: function () {
+        if (MaintainerReports.validateParameter()) {
             var parameters = {
-                "method":"addParameter"
+                "method": "addParameter"
                 //, "parameterId":$("#id").val()
-                , "parameterName":$("#parameterName").val()
-                , "parameterTypeId":$("#parameterTypeId").val()
-                , "parameterRequired":$("#parameterRequired").prop("checked")
-                , "parameterTypeName":$("#parameterTypeId option:selected").text()
+                , "parameterName": $("#parameterName").val()
+                , "parameterTypeId": $("#parameterTypeId").val()
+                , "dateFormatId": $("#dateFormatId").val() == -1 ? null : $("#dateFormatId").val()
+                , "parameterRequired": $("#parameterRequired").prop("checked")
             };
 
             $.ajax({
-                url:"/reports14/maintainerReports.do"
-                , method:"POST"
+                url: "/reports14/maintainerReports.do"
+                , method: "POST"
                 , data: parameters
-                , dataType:"html"
-                , success:function(html){
-                    MaintainerReports.refresh();
+                , dataType: "html"
+                , success: function (html) {
+                    $("#tableParameters").html(html);
                     MaintainerReports.cleanParameter();
                 }
             });
-        }else{
+        } else {
             Generic.errorDialog(ERROR_MESSAGE);
         }
 
     },
-
-    editParameter: function (id){
+    getParameter: function (id) {
         var parameter = {
-            "method": "editParameter"
-            , "parameterId":id
+            "method": "getParameter"
+            , "parameterId": id
         };
 
-        $(function() {
+        $(function () {
             $.ajax({
-                url:"/reports14/maintainerReports.do"
+                url: "/reports14/maintainerReports.do"
                 , data: parameter
                 , dataType: "json"
-                , success:function(json){
+                , success: function (json) {
                     //$("#parameterId").val(json.id);
                     $("#parameterName").val(json.name);
-                    $("#parameterTypeId").val(json.type);
-                    if (json.required==true){
-                        $("#parameterRequired").prop('checked',true);
-                    }else{
-                        $("#parameterRequired").prop('checked',false);
+                    $("#parameterTypeId").val(json.parameterTypeEnum.id);
+                    $("#dateFormatId").val(json.data2);
+                    if (json.required == true) {
+                        $("#parameterRequired").prop('checked', true);
+                    } else {
+                        $("#parameterRequired").prop('checked', false);
                     }
+                    MaintainerReports.checkParameterType(false);
                 }
             });
         });
     },
+    checkParameterType: function (cleanVal) {
+        if ($("#parameterTypeId").val() == 2) {
+            $("#dateFormatId").prop('disabled', false);
+            return true;
+        } else {
+            $("#dateFormatId").prop('disabled', true);
 
-    delParameter: function(id){
+            if (cleanVal) {
+                $("#dateFormatId").val(-1);
+            }
+            return false;
+        }
+    },
+    deleteParameter: function (id) {
         var parameter = {
-            "method": "delParameter"
+            "method": "deleteParameter"
             , "parameterId": id
         };
 
-        $(function() {
+        $(function () {
             //Se declara el texto
-            var div='<div id="dialog-confirm" title="Confirmar">'+
+            var div = '<div id="dialog-confirm" title="Confirmar">' +
                 '<p>' +
-                '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;"></span>'+
-                '¿Desea eliminar el parametro?'+
-                '</p>'+
+                '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;"></span>' +
+                '¿Desea eliminar el parametro?' +
+                '</p>' +
                 '</div>';
 
             $(div).dialog({
                 resizable: false,
-                height:230,
+                height: 230,
                 modal: true,
                 buttons: {
-                    "Eliminar": function() {
-                        $( this ).dialog( "close" );
+                    "Eliminar": function () {
+                        $(this).dialog("close");
                         $.ajax({
-                            url:"/reports14/maintainerReports.do"
+                            url: "/reports14/maintainerReports.do"
                             , data: parameter
                             , dataType: "html"
-                            , success: function(html){
+                            , success: function (html) {
                                 //$("#tableParameters").html(html)
-                                MaintainerReports.refresh();
                             }
                         });
                     },
-                    Cancelar: function() {
-                        $( this ).dialog( "close" );
+                    Cancelar: function () {
+                        $(this).dialog("close");
                     }
                 }
             });
         });
 
     },
-
-    saveReport: function(){
-        if (MaintainerReports.validateReport()){
+    parameterList: function () {
+        $.ajax({
+            url: "/reports14/maintainerReports.do"
+            , method: "POST"
+            , data: "method=parameterList"
+            , dataType: "html"
+            , success: function (html) {
+                $("#tableParameters").html(html);
+            }
+        });
+    },
+    save: function () {
+        if (MaintainerReports.validateReport()) {
+            $("#method").val("save");
+            $("#maintainerReportsFormId").submit();
+            /*
             var report = {
                 method: "save"
-                , "name":$("#name").val()
-                , "conexionId":$("#conexionId").val()
-                , "areaId":$("#areaId").val()
-                , "sqlDescription":$("#sqlDescription").val()
+                , "name": $("#name").val()
+                , "conexionId": $("#conexionId").val()
+                , "areaId": $("#areaId").val()
+                , "sqlDescription": $("#sqlDescription").val()
                 , "sqlText": $("#sqlText").val()
             };
 
             $.ajax({
-                url:"/reports14/maintainerReports.do"
+                url: "/reports14/maintainerReports.do"
+                , contentType: "application/x-www-form-urlencoded; charset=UTF-8"
                 , method: "POST"
                 , data: report
                 , dataType: "html"
-                , success: function(html){
+                , success: function (html) {
                     MaintainerReports.refreshReport();
                     MaintainerReports.clean();
                     MaintainerReports.cleanTableParameter();
                 }
             });
-        }else{
+            */
+        } else {
             Generic.errorDialog(ERROR_MESSAGE);
         }
     },
-
-    delReport: function(id){
+    delete: function (id) {
         var parameter = {
-            "method": "delReport"
+            "method": "delete"
             , "reportId": id
         };
 
-        $(function() {
+        $(function () {
             //Se declara el texto
-            var div='<div id="dialog-confirm" title="Confirmar">'+
+            var div = '<div id="dialog-confirm" title="Confirmar">' +
                 '<p>' +
-                '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;"></span>'+
-                '¿Desea eliminar el Reporte?'+
-                '</p>'+
+                '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 10px 0;"></span>' +
+                '¿Desea eliminar el Reporte?' +
+                '</p>' +
                 '</div>';
 
             $(div).dialog({
                 resizable: false,
-                height:230,
+                height: 230,
                 modal: true,
                 buttons: {
-                    "Eliminar": function() {
-                        $( this ).dialog( "close" );
+                    "Eliminar": function () {
+                        $(this).dialog("close");
                         $.ajax({
                             url: "/reports14/maintainerReports.do"
                             , data: parameter
                             , dataType: "html"
-                            , success: function(){
+                            , success: function () {
                                 MaintainerReports.refreshReport();
                             }
-                            , error: function(){
-                                alert("No se pudo eliminar el reporte") ;
+                            , error: function () {
+                                alert("No se pudo eliminar el reporte");
                             }
                         });
                     },
-                    Cancelar: function() {
-                        $( this ).dialog( "close" );
+                    Cancelar: function () {
+                        $(this).dialog("close");
                     }
                 }
             });
         });
     },
-
-    refresh: function() {
-        $.ajax({
-            url: "/reports14/maintainerReports.do",
-            method: "POST",
-            data: "method=refresh",
-            dataType: "html",
-            success: function (html) {
-                $("#tableParameters").html(html);
-            }
-        });
-    },
-
-    refreshReport: function(){
+    refreshReport: function () {
         $.ajax({
             url: "/reports14/maintainerReports.do"
             , method: "POST"
             , data: "method=refreshReport"
             , dataType: "html"
-            , success: function(html){
+            , success: function (html) {
                 $("#tableReports").html(html);
                 $("#name").val("");
                 $("#conexionId").val(-1);
@@ -295,48 +311,39 @@ var MaintainerReports = {
                 $("#sqlDescription").val("");
                 $("#sqlText").val("");
             }
-            , error: function (){
+            , error: function () {
                 alert("No pude refrescar los reportes");
             }
         });
     },
-
-    editReport: function(id){
+    get: function (id) {
         var parameters = {
-            "method": "editReport"
+            "method": "get"
             , "reportId": id
         };
 
-        $(function() {
-            $.ajax ({
+        $(function () {
+            $.ajax({
                 url: "/reports14/maintainerReports.do"
                 , data: parameters
                 , dataType: "json"
-                , success: function(json){
+                , success: function (json) {
                     $("#name").val(json.name);
                     $("#conexionId").val(json.conexionId);
                     $("#areaId").val(json.areaId);
                     $("#sqlDescription").val(json.description);
                     $("#sqlText").val(json.sql);
-                    $("#tableParameters").val(json.parameterList);
-                    $("#tabs").tabs("select","maintainer");
-                    MaintainerReports.refresh();
+
+                    MaintainerReports.parameterList();
+
+                    $("#tabs").tabs("select", "maintainer");
                 }
-                , error: function(){
+                , error: function () {
                     alert("No pude editar el reporte");
                 }
             });
         });
-    },
-
-    get: function(id) {
-
-    },
-
-    nuevoMetodo: function (id, name, code) {
-
     }
-
 };
 
 

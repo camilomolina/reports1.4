@@ -8,9 +8,8 @@
         <result property="id" column="PARE_SEQ_CDG"/>
         <result property="reportId" column="RPTE_SEQ_CDG"/>
         <result property="name" column="PARE_NOMBRE"/>
-        <result property="type" column="TPPR_SEQ_CDG"/>
+        <result property="parameterTypeEnum" column="TPPR_SEQ_CDG" typeHandler="parameterTypeHandler"/>
         <result property="required" column="PARE_REQUERIDO"/>
-        <result property="like" column="PARE_COMO"/>
         <result property="data1" column="PARE_DATO1"/>
         <result property="data2" column="PARE_DATO2"/>
     </resultMap>
@@ -21,7 +20,6 @@
           , TPPR_SEQ_CDG
           , PARE_NOMBRE
           , PARE_REQUERIDO
-          , PARE_COMO
           , PARE_DATO1
           , PARE_DATO2
         FROM PARAMETROS_REPORTE
@@ -36,21 +34,12 @@
         WHERE PARE_SEQ_CDG = #value#
     </select>
 
-    <insert id="insertParametro" parameterClass="cl.bennu.reports.commons.dto.ParameterDTO">
-        INSERT INTO PARAMETROS_REPORTE (RPTE_SEQ_CDG, TPPR_SEQ_CDG, PARE_NOMBRE, PARE_REQUERIDO, PARE_COMO, PARE_DATO1, PARE_DATO2)
-        VALUES (#reportId#, #type#, #name#, #required#, #like#, #data1#, #data2#)
-        <selectKey keyProperty="id" resultClass="java.lang.Long">
-            SELECT @@IDENTITY
-        </selectKey>
-    </insert>
-
     <update id="updateParameter" parameterClass="cl.bennu.reports.commons.dto.ParameterDTO">
         UPDATE PARAMETROS_REPORTE SET
-            TPPR_SEQ_CDG = #type#
+            TPPR_SEQ_CDG = #parameterTypeEnum#
             , RPTE_SEQ_CDG = #reportId#
             , PARE_NOMBRE = #name#
             , PARE_REQUERIDO = #required#
-            , PARE_COMO = #like#
             , PARE_DATO1 = #data1#
             , PARE_DATO2 = #data2#
         WHERE PARE_SEQ_CDG = #id#
@@ -66,8 +55,11 @@
     </select>
 
     <insert id="insertParameter" parameterClass="cl.bennu.reports.commons.dto.ParameterDTO">
-        INSERT INTO PARAMETROS_REPORTE (TPPR_SEQ_CDG, RPTE_SEQ_CDG, PARE_NOMBRE, PARE_REQUERIDO, PARE_COMO)
-        VALUES (#type#, #reportId#, #name#, #required#, #like#)
+        INSERT INTO PARAMETROS_REPORTE (TPPR_SEQ_CDG, RPTE_SEQ_CDG, PARE_NOMBRE, PARE_REQUERIDO, PARE_DATO1, PARE_DATO2)
+        VALUES (#parameterTypeEnum#, #reportId#, #name#, #required#, #data1#, #data2#)
+        <selectKey keyProperty="id" resultClass="java.lang.Long">
+            SELECT @@IDENTITY
+        </selectKey>
     </insert>
 
     <delete id="deleteParameterByReportId" parameterClass="java.lang.Long">

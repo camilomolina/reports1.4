@@ -18,15 +18,33 @@ public class MaintainerReportsForm extends ActionForm {
     private String sqlText;
     private String parameterName;
     private Long parameterTypeId;
+    private Long dateFormatId;
     private String parameterTypeName;
     private Boolean parameterRequired;
     private List areaList;
     private List parameterTypeList;
+    private List dateFormatList;
     private Integer parameterId;
     private List reportsList;
     private Long reportId;
     private List conexionList;
     private Long conexionId;
+
+    public Long getDateFormatId() {
+        return dateFormatId;
+    }
+
+    public void setDateFormatId(Long dateFormatId) {
+        this.dateFormatId = dateFormatId;
+    }
+
+    public List getDateFormatList() {
+        return dateFormatList;
+    }
+
+    public void setDateFormatList(List dateFormatList) {
+        this.dateFormatList = dateFormatList;
+    }
 
     public String getMethod() {
         return method;
@@ -35,6 +53,7 @@ public class MaintainerReportsForm extends ActionForm {
     public void setMethod(String method) {
         this.method = method;
     }
+
 
     public String getName() {
         return name;
