@@ -1,0 +1,77 @@
+<!DOCTYPE sqlMap PUBLIC
+        "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="Log">
+
+    <resultMap id="logResult" class="cl.bennu.reports.commons.dto.LogDTO">
+        <result property="id" column="LOG_SEQ_CDG"/>
+        <result property="name" column="LOG_NOMBRE"/>
+        <result property="host" column="LOG_HOST"/>
+        <result property="user" column="LOG_USUARIO"/>
+        <result property="sql" column="LOG_SQL"/>
+        <result property="url" column="LOG_URL"/>
+        <result property="startSQL" column="LOG_FECHA_INICIO_CONSULTA_DB"/>
+        <result property="endSQL" column="LOG_FECHA_TERMINO_CONSULTA_DB"/>
+        <result property="startReport" column="LOG_FECHA_INICIO_GENERACION_REPORTE"/>
+        <result property="endReport" column="LOG_FECHA_TERMINO_GENERACION_REPORTE"/>
+        <result property="reportGenerateResponseEnum" column="TPRR_SEQ_CDG" typeHandler="cl.bennu.reports.persistence.handler.ReportGenerateResponseHandler"/>
+        <result property="remark" column="LOG_DESCRIPCION"/>
+    </resultMap>
+
+    <sql id="selectLog">
+        SELECT LOG_SEQ_CDG
+            , LOG_NOMBRE
+            , LOG_HOST
+            , LOG_USUARIO
+            , LOG_SQL
+            , LOG_URL
+            , LOG_FECHA_INICIO_CONSULTA_DB
+            , LOG_FECHA_TERMINO_CONSULTA_DB
+            , LOG_FECHA_INICIO_GENERACION_REPORTE
+            , LOG_FECHA_TERMINO_GENERACION_REPORTE
+            , TPRR_SEQ_CDG
+            , LOG_DESCRIPCION
+        FROM LOG_REPORTES
+    </sql>
+
+    <select id="getAllLog" parameterClass="cl.bennu.reports.commons.dto.LogDTO" resultMap="logResult">
+        <include refid="selectLog"/>
+    </select>
+
+    <select id="getLogById" parameterClass="java.lang.Long" resultMap="logResult">
+        <include refid="selectLog"/>
+        WHERE LOG_SEQ_CDG = #value#
+    </select>
+
+    <insert id="insertLog" parameterClass="cl.bennu.reports.commons.dto.LogDTO">
+        INSERT INTO LOG_REPORTES (LOG_NOMBRE, LOG_HOST, LOG_USUARIO, LOG_SQL, LOG_URL, LOG_FECHA_INICIO_CONSULTA_DB, LOG_FECHA_TERMINO_CONSULTA_DB, LOG_FECHA_INICIO_GENERACION_REPORTE, LOG_FECHA_TERMINO_GENERACION_REPORTE, TPRR_SEQ_CDG, LOG_DESCRIPCION)
+        VALUES (#name#, #host#, #user#, #sql#, #url#, #startSQL#, #endSQL#, #startReport#, #endReport#, #reportGenerateResponseEnum#, #remark#)
+        <selectKey keyProperty="id" resultClass="java.lang.Long">
+            SELECT @@IDENTITY
+        </selectKey>
+    </insert>
+    
+    <update id="updateLog" parameterClass="cl.bennu.reports.commons.dto.LogDTO">
+        UPDATE LOG_REPORTES SET
+          LOG_NOMBRE = #name#
+          , LOG_HOST = #host#
+          , LOG_USUARIO = #user#
+          , LOG_SQL = #sql#
+          , LOG_URL = #url#
+          , LOG_FECHA_INICIO_CONSULTA_DB = #startSQL#
+          , LOG_FECHA_TERMINO_CONSULTA_DB = #endSQL#
+          , LOG_FECHA_INICIO_GENERACION_REPORTE = #startReport#
+          , LOG_FECHA_TERMINO_GENERACION_REPORTE = #endReport#
+          , TPRR_SEQ_CDG = #reportGenerateResponseEnum#
+          , LOG_DESCRIPCION = #remark#
+        WHERE LOG_SEQ_CDG = #id#
+    </update>
+
+    <delete id="deleteLog" parameterClass="java.lang.Long">
+        DELETE FROM LOG_REPORTES WHERE LOG_SEQ_CDG = #value#
+    </delete>
+
+
+</sqlMap>

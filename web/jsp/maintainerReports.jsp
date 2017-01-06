@@ -32,6 +32,7 @@
         <ul>
             <li title="Mantenedor"><a href="#maintainer">Crear reporte</a></li>
             <li title="Listado reportes"><a href="#listTable">Listado</a></li>
+            <li title="Ayuda"><a href="#helpTable">Ayuda</a></li>
         </ul>
         <div id="maintainer" align="center">
             <table id="tableDatos" >
@@ -155,6 +156,26 @@
                     <jsp:include page="/jsp/jspf/reportsList.jsp" flush="true"/>
                 </div>
             </tr>
+        </div>
+
+        <div id="helpTable" align="center">
+            <p>
+                Los parametros deben ingresarse con la etiqueta $P{NOMBRE_PARAMETRO}
+                <br/>
+                Ejemplo:  <strong>WHERE ID_PRODUCTO = $P{idProducto}</strong>
+                <br/><br/>
+
+                Si el parametro es del tipo rango de fecha se debe repetir el parametro
+                <br/>
+                Ejemplo:   <strong>WHERE FECHA_INICIO BETWEEN $P{fecha} AND $P{fecha}</strong>
+                <br/><br/>
+
+                Si el parametro es opcional se debe cerrar toda la sentencia SQL con la etiqueta $O{NOMBRE_PARAMETRO}
+                <br/>
+                Ejemplo:  <strong>$O{valor} WHERE MONTO_PRODUCTO = $P{valor} $O{valor}</strong>
+                <br/><br/>
+                Si se selecciona algun formato de fecha, el programa ingresa automaticamente el primer dia del dia y/o del mes
+            </p>
         </div>
 
         <fieldset style="display:none" id="loader">

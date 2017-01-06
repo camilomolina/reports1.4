@@ -11,6 +11,7 @@
     <title></title>
   </head>
   <body>
-
+    <p onclick="location.href='/reports14/maintainerDatasource.do'">Mantenedor Conexiones</p>
+    <p onclick="location.href='/reports14/maintainerReports.do'">Mantenedor Reportes</p>
   </body>
 </html>

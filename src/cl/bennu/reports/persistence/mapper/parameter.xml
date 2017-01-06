@@ -8,7 +8,7 @@
         <result property="id" column="PARE_SEQ_CDG"/>
         <result property="reportId" column="RPTE_SEQ_CDG"/>
         <result property="name" column="PARE_NOMBRE"/>
-        <result property="parameterTypeEnum" column="TPPR_SEQ_CDG" typeHandler="parameterTypeHandler"/>
+        <result property="parameterTypeEnum" column="TPPR_SEQ_CDG" typeHandler="cl.bennu.reports.persistence.handler.ParameterTypeHandler"/>
         <result property="required" column="PARE_REQUERIDO"/>
         <result property="data1" column="PARE_DATO1"/>
         <result property="data2" column="PARE_DATO2"/>

@@ -72,11 +72,5 @@
         DELETE FROM REPORTE WHERE RPTE_SEQ_CDG = #value#
     </delete>
 
-    <!-- pa que shusha es esto!!! no deberia ser asi...  -->
-    <update id="updateParametroIdReporte" parameterClass="java.lang.Long">
-        UPDATE PARAMETROS_REPORTE
-        SET RPTE_SEQ_CDG = #value#
-        WHERE RPTE_SEQ_CDG IS NULL
-    </update>
 
 </sqlMap>

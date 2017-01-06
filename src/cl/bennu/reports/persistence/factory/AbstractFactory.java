@@ -29,6 +29,10 @@ public class AbstractFactory {
     public static IReportDAO getReportDAO() {
         return new ReportImpl();
     }
+
+    public static ILogDAO getLogDAO() {
+        return new LogImpl();
+    }
 }
 
 

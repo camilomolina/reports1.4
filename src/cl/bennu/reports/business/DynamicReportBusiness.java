@@ -3,6 +3,10 @@ package cl.bennu.reports.business;
 import cl.bennu.reports.commons.dto.*;
 import cl.bennu.reports.commons.dto.base.ContextDTO;
 import cl.bennu.reports.commons.enums.ParameterTypeEnum;
+import cl.bennu.reports.commons.enums.ReportGenerateResponseEnum;
+import cl.bennu.reports.commons.exception.DriverException;
+import cl.bennu.reports.commons.exception.ExecuteException;
+import cl.bennu.reports.commons.exception.ParameterException;
 import cl.bennu.reports.persistence.dao.*;
 import cl.bennu.reports.persistence.factory.AbstractFactory;
 import org.apache.commons.codec.binary.Base64;
@@ -26,6 +30,7 @@ public class DynamicReportBusiness {
     private IParameterTypeDAO tipoParametroDAO;
     private IConexionDAO conexionDAO;
     private IReportDAO reportDAO;
+    private ILogDAO logDAO;
 
     private DynamicReportBusiness() {
         areaDAO = AbstractFactory.getAreaDAO();
@@ -34,6 +39,7 @@ public class DynamicReportBusiness {
         tipoParametroDAO = AbstractFactory.getParameterTypeDAO();
         reportDAO = AbstractFactory.getReportDAO();
         conexionDAO = AbstractFactory.getConexionDAO();
+        logDAO = AbstractFactory.getLogDAO();
     }
 
     public static DynamicReportBusiness getInstance() {
@@ -186,7 +192,9 @@ public class DynamicReportBusiness {
             }
             Long id = reportDTO.getId();
 
-            if (reportDTO.getId() != null){parameterDAO.deleteByReportId(id);}
+            if (reportDTO.getId() != null) {
+                parameterDAO.deleteByReportId(id);
+            }
 
             Iterator iter = IteratorUtils.getIterator(reportDTO.getParameterList());
             ParameterDTO parameterDTO = null;
@@ -204,7 +212,7 @@ public class DynamicReportBusiness {
 
                 saveParameter(contextDTO, parameterDTO);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("No se pudo ingresar el parametro");
         }
     }
@@ -232,129 +240,175 @@ public class DynamicReportBusiness {
     public OutputStream generate(ContextDTO contextDTO, ReportDTO reportDTO) throws Exception {
         ConexionDTO conexionDTO = getConexionById(contextDTO, reportDTO.getConexionId());
 
-        List list = reportDAO.execute(reportDTO, conexionDTO);
-
         String reportTitle = reportDTO.getName();
+        Date now = new Date();
 
-        HSSFWorkbook workBook = new HSSFWorkbook();
+        LogDTO logDTO = new LogDTO();
+        logDTO.setName(reportTitle);
+        logDTO.setHost(contextDTO.getHost());
+        logDTO.setUser(contextDTO.getUser());
+        logDTO.setUrl(conexionDTO.getUrl());
+        logDTO.setSql(reportDTO.getSql());
+        logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.ERROR);
 
-        HSSFFont fontTitle = workBook.createFont();
-        fontTitle.setFontHeightInPoints((short) 14);
-        fontTitle.setColor(HSSFColor.BLUE_GREY.index);
-        fontTitle.setFontName(HSSFFont.FONT_ARIAL);
+        logDTO.setStartSQL(now);
+        logDAO.insert(logDTO);
 
-        HSSFFont fontHeader = workBook.createFont();
-        fontHeader.setFontHeightInPoints((short) 8);
-        fontHeader.setColor(HSSFColor.BLACK.index);
-        fontHeader.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        List list = null;
+        try {
+            list = reportDAO.execute(reportDTO, conexionDTO);
+        } catch (DriverException e) {
+            logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.UNSUPPORTED_DRIVER);
+            logDTO.setRemark("Driver:" + conexionDTO.getName());
+            logDAO.update(logDTO);
+            throw e;
+        } catch (ParameterException e) {
+            logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.PARAMETER_ERROR);
+            logDTO.setRemark("SQL:" + e.getSql());
+            logDAO.update(logDTO);
+            throw e;
+        } catch (ExecuteException e) {
+            logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.SQL_ERROR);
+            logDTO.setRemark("SQL:" + e.getSql());
+            logDAO.update(logDTO);
+            throw e;
+        }
 
-        HSSFFont fontNormal = workBook.createFont();
-        fontNormal.setColor(HSSFColor.BLACK.index);
-        fontNormal.setFontHeightInPoints((short) 8);
+        logDTO.setEndSQL(new Date());
+        logDTO.setStartReport(new Date());
+        logDAO.update(logDTO);
+
+        try {
+            HSSFWorkbook workBook = new HSSFWorkbook();
+
+            HSSFFont fontTitle = workBook.createFont();
+            fontTitle.setFontHeightInPoints((short) 14);
+            fontTitle.setColor(HSSFColor.BLUE_GREY.index);
+            fontTitle.setFontName(HSSFFont.FONT_ARIAL);
+
+            HSSFFont fontHeader = workBook.createFont();
+            fontHeader.setFontHeightInPoints((short) 8);
+            fontHeader.setColor(HSSFColor.BLACK.index);
+            fontHeader.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+
+            HSSFFont fontNormal = workBook.createFont();
+            fontNormal.setColor(HSSFColor.BLACK.index);
+            fontNormal.setFontHeightInPoints((short) 8);
 
 
-        HSSFCellStyle cellStyleTitle = workBook.createCellStyle();
-        cellStyleTitle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-        cellStyleTitle.setFont(fontTitle);
+            HSSFCellStyle cellStyleTitle = workBook.createCellStyle();
+            cellStyleTitle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+            cellStyleTitle.setFont(fontTitle);
 
-        HSSFCellStyle cellStyleHeader = workBook.createCellStyle();
-        cellStyleHeader.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-        //cellStyleHeader.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
-        //cellStyleHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        //cellStyleHeader.setWrapText(false);
-        //cellStyleHeader.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-        cellStyleHeader.setFont(fontHeader);
+            HSSFCellStyle cellStyleHeader = workBook.createCellStyle();
+            cellStyleHeader.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+            //cellStyleHeader.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+            //cellStyleHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            //cellStyleHeader.setWrapText(false);
+            //cellStyleHeader.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            cellStyleHeader.setFont(fontHeader);
 
-        HSSFCellStyle cellStyleNormal = workBook.createCellStyle();
-        //cellStyleNormal.setWrapText(false);
-        //cellStyleNormal.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-        cellStyleNormal.setFont(fontNormal);
+            HSSFCellStyle cellStyleNormal = workBook.createCellStyle();
+            //cellStyleNormal.setWrapText(false);
+            //cellStyleNormal.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            cellStyleNormal.setFont(fontNormal);
 
-        HSSFCellStyle cellStyleNumber = workBook.createCellStyle();
-        //cellStyleNumber.setWrapText(true);
-        cellStyleNumber.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-        cellStyleNumber.setFont(fontNormal);
-        cellStyleNumber.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0.0000"));
+            HSSFCellStyle cellStyleNumber = workBook.createCellStyle();
+            //cellStyleNumber.setWrapText(true);
+            cellStyleNumber.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            cellStyleNumber.setFont(fontNormal);
+            cellStyleNumber.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0.0000"));
 
-        HSSFCellStyle cellStyleDate = workBook.createCellStyle();
-        //cellStyleDate.setWrapText(true);
-        cellStyleDate.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-        cellStyleDate.setFont(fontNormal);
-        cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
+            HSSFCellStyle cellStyleDate = workBook.createCellStyle();
+            //cellStyleDate.setWrapText(true);
+            cellStyleDate.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            cellStyleDate.setFont(fontNormal);
+            cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
 
-        HSSFSheet sheet = workBook.createSheet("Reporte");
-        HSSFRow row;
-        HSSFCell cell;
+            HSSFSheet sheet = workBook.createSheet("Reporte");
+            HSSFRow row;
+            HSSFCell cell;
 
-        sheet.setDefaultColumnWidth((short) 16);
-        sheet.setDefaultRowHeight((short) 15);
+            sheet.setDefaultColumnWidth((short) 16);
+            sheet.setDefaultRowHeight((short) 15);
 
-        int i = 1;
-        boolean header = true;
-        Iterator iterReportList = IteratorUtils.getIterator(list);
-        while (iterReportList.hasNext()) {
-            Map map = (HashMap) iterReportList.next();
-            Set set = map.keySet();
+            int i = 1;
+            boolean header = true;
+            Iterator iterReportList = IteratorUtils.getIterator(list);
+            while (iterReportList.hasNext()) {
+                Map map = (HashMap) iterReportList.next();
+                Set set = map.keySet();
 
-            int j = 0;
+                int j = 0;
 
-            // armamos la cabecera
-            if (header) {
+                // armamos la cabecera
+                if (header) {
+                    Iterator iterReportElement = IteratorUtils.getIterator(set);
+                    while (iterReportElement.hasNext()) {
+                        Object key = iterReportElement.next();
+                        row = sheet.createRow(0);
+
+                        cell = row.createCell((short) j);
+                        cell.setCellStyle(cellStyleHeader);
+                        cell.setCellValue(key.toString());
+
+                        j++;
+                    }
+
+                    header = false;
+                }
+
+                row = sheet.createRow(i);
+
+                j = 0;
+
+                // armamos con los ressultados de la consulta
                 Iterator iterReportElement = IteratorUtils.getIterator(set);
-                while(iterReportElement.hasNext()) {
+                while (iterReportElement.hasNext()) {
                     Object key = iterReportElement.next();
-                    row = sheet.createRow(0);
+                    Object o = map.get(key);
 
                     cell = row.createCell((short) j);
-                    cell.setCellStyle(cellStyleHeader);
-                    cell.setCellValue(key.toString());
+                    if (o == null) {
+                        cell.setCellStyle(cellStyleNormal);
+                        cell.setCellValue("");
+                    } else if (o instanceof String) {
+                        cell.setCellStyle(cellStyleNormal);
+                        cell.setCellValue(o.toString());
+                    } else if (o instanceof Number) {
+                        cell.setCellStyle(cellStyleNumber);
+                        cell.setCellValue(Double.parseDouble(o.toString()));
+                    } else if (o instanceof Date) {
+                        cell.setCellStyle(cellStyleDate);
+                        cell.setCellValue((Date) o);
+                    } else {
+                        cell.setCellStyle(cellStyleNormal);
+                        cell.setCellValue(o.toString());
+                    }
 
                     j++;
                 }
 
-                header = false;
+                i++;
             }
 
-            row = sheet.createRow(i);
-
-            j = 0;
-
-            // armamos con los ressultados de la consulta
-            Iterator iterReportElement = IteratorUtils.getIterator(set);
-            while(iterReportElement.hasNext()) {
-                Object key = iterReportElement.next();
-                Object o = map.get(key);
-
-                cell = row.createCell((short) j);
-                if (o == null) {
-                    cell.setCellStyle(cellStyleNormal);
-                    cell.setCellValue("");
-                } else if (o instanceof String) {
-                    cell.setCellStyle(cellStyleNormal);
-                    cell.setCellValue(o.toString());
-                } else if (o instanceof Number) {
-                    cell.setCellStyle(cellStyleNumber);
-                    cell.setCellValue(Double.parseDouble(o.toString()));
-                } else if (o instanceof Date) {
-                    cell.setCellStyle(cellStyleDate);
-                    cell.setCellValue((Date)o);
-                } else {
-                    cell.setCellStyle(cellStyleNormal);
-                    cell.setCellValue(o.toString());
-                }
-
-                j++;
-            }
-
-            i++;
-        }
-
-        try {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             workBook.write(os);
 
+            Date end = new Date();
+
+            if (now.getTime() + (60 * 1000 * 1) < end.getTime()) {
+                logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.WARM);
+            } else {
+                logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.OK);
+            }
+            logDTO.setEndReport(end);
+            logDAO.update(logDTO);
+
             return os;
         } catch (Exception e) {
+            logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.ERROR_GENERATE);
+            logDAO.update(logDTO);
             return null;
         }
     }

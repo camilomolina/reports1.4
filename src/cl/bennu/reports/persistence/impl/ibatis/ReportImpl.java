@@ -4,6 +4,9 @@ import cl.bennu.reports.commons.dto.ConexionDTO;
 import cl.bennu.reports.commons.dto.ParameterDTO;
 import cl.bennu.reports.commons.dto.ReportDTO;
 import cl.bennu.reports.commons.enums.ParameterTypeEnum;
+import cl.bennu.reports.commons.exception.DriverException;
+import cl.bennu.reports.commons.exception.ExecuteException;
+import cl.bennu.reports.commons.exception.ParameterException;
 import cl.bennu.reports.persistence.IbatisUtils;
 import cl.bennu.reports.persistence.dao.IReportDAO;
 import org.apache.commons.codec.binary.Base64;
@@ -74,86 +77,94 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
             Class.forName(driverBD);
             connection = DriverManager.getConnection(url, user, pass);
         } catch (Exception e) {
-            throw e;
+            throw new DriverException(e);
         }
-        //String sql = reportDTO.getSql();
+        String sqlF = "";
+        PreparedStatement preparedStatement;
+        try {
+            // filtramos opcionales
+            String sqlWithParameter = filterQueryForOptional(reportDTO);
 
-        // filtramos opcionales
-        String sqlWithParameter = filterQueryForOptional(reportDTO);
+            // creamos lista con parametros que encontramos y filtramos la query
+            List parameters = new ArrayList();
+            sqlWithParameter = filterQueryForParameters(sqlWithParameter, parameters);
 
-        // creamos lista con parametros que encontramos y filtramos la query
-        List parameters = new ArrayList();
-        sqlWithParameter = filterQueryForParameters(sqlWithParameter, parameters);
+            sqlF = sqlWithParameter;
+            preparedStatement = connection.prepareStatement(sqlWithParameter);
 
-        PreparedStatement preparedStatement = connection.prepareStatement(sqlWithParameter);
+            int i = 1;
 
-        int i = 1;
+            // iteramos los parametros encontrados
+            Iterator parameterIter = parameters.iterator();
+            while (parameterIter.hasNext()) {
+                String parameter = (String) parameterIter.next();
+                Iterator parameterReportIter = IteratorUtils.getIterator(reportDTO.getParameterList());
 
-        // iteramos los parametros encontrados
-        Iterator parameterIter = parameters.iterator();
-        while (parameterIter.hasNext()) {
-            String parameter = (String) parameterIter.next();
-            Iterator parameterReportIter = IteratorUtils.getIterator(reportDTO.getParameterList());
+                while (parameterReportIter.hasNext()) {
+                    // buscamos en lso parametros del reporte para optener el dato ingresado en el formulario
+                    ParameterDTO parameterDTO = (ParameterDTO) parameterReportIter.next();
 
-            while (parameterReportIter.hasNext()) {
-                // buscamos en lso parametros del reporte para optener el dato ingresado en el formulario
-                ParameterDTO parameterDTO = (ParameterDTO) parameterReportIter.next();
-
-                if (parameter.equalsIgnoreCase(parameterDTO.getName())) {
-                    if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC)) {
-                        preparedStatement.setString(i, parameterDTO.getValue().toString());
-                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC_PLUS_LIKE)) {
-                        preparedStatement.setString(i, "%" + parameterDTO.getValue().toString() + "%");
-                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE)) {
-                        preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValue()).getTime()));
-                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.NUMERIC)) {
-                        preparedStatement.setLong(i, Long.parseLong(parameterDTO.getValue().toString()));
-                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.BOOLEAN)) {
-                        preparedStatement.setBoolean(i, ((Boolean) parameterDTO.getValue()).booleanValue());
-                    } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE_RANGE)) {
-                        preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR1()).getTime()));
-                        i++;
-                        preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR2()).getTime()));
+                    if (parameter.equalsIgnoreCase(parameterDTO.getName())) {
+                        if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC)) {
+                            preparedStatement.setString(i, parameterDTO.getValue().toString());
+                        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC_PLUS_LIKE)) {
+                            preparedStatement.setString(i, "%" + parameterDTO.getValue().toString() + "%");
+                        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE)) {
+                            preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValue()).getTime()));
+                        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.NUMERIC)) {
+                            preparedStatement.setLong(i, Long.parseLong(parameterDTO.getValue().toString()));
+                        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.BOOLEAN)) {
+                            preparedStatement.setBoolean(i, ((Boolean) parameterDTO.getValue()).booleanValue());
+                        } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE_RANGE)) {
+                            preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR1()).getTime()));
+                            i++;
+                            preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR2()).getTime()));
+                        }
                     }
                 }
-            }
 
-            i++;
+                i++;
+            }
+        } catch (Exception e) {
+            throw new ParameterException(sqlF, e);
         }
 
-        System.out.println(sqlWithParameter);
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-
-        System.out.println("-- REPORTS14 -- : Termino de ejecucion " + reportDTO.getDescription());
-
-        List result = new ArrayList();
-
-        // retornamos la informacion en un hashmap ordenado
-        int column;
-        int top = resultSetMetaData.getColumnCount();
-        while (resultSet.next()) {
-            Map map = new LinkedHashMap();
-
-            boolean forward = true;
-            column = 1;
-            while (forward) {
-                map.put(resultSetMetaData.getColumnName(column), resultSet.getObject(column));
-                column++;
-
-                if (column > top) {
-                    forward = false;
-                }
-            }
-            result.add(map);
-        }
-
-        // cerrando db
+        List result;
         try {
-            resultSet.close();
-            connection.close();
-        } catch (Exception e){}
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+
+            //System.out.println("-- REPORTS14 -- : Termino de ejecucion " + reportDTO.getDescription());
+
+            result = new ArrayList();
+
+            // retornamos la informacion en un hashmap ordenado
+            int column;
+            int top = resultSetMetaData.getColumnCount();
+            while (resultSet.next()) {
+                Map map = new LinkedHashMap();
+
+                boolean forward = true;
+                column = 1;
+                while (forward) {
+                    map.put(resultSetMetaData.getColumnName(column), resultSet.getObject(column));
+                    column++;
+
+                    if (column > top) {
+                        forward = false;
+                    }
+                }
+                result.add(map);
+            }
+
+            // cerrando db
+            try {
+                resultSet.close();
+                connection.close();
+            } catch (Exception e){}
+        } catch (Exception e) {
+            throw new ExecuteException(sqlF, e);
+        }
 
         System.out.println("-- REPORTS14 -- : Cierra conexion DB " + conexionDTO.getName());
 

@@ -23,6 +23,15 @@ h1 {
     margin: .6em 0;
 }
 
+p {
+    font-size: 0.65em;
+    margin: .2em 0;
+    color: #003B71;
+    font-family: Helvetica;
+    text-align: left;
+}
+
+
 div#list-contain {
     width: 350px;
     margin: 20px 0;

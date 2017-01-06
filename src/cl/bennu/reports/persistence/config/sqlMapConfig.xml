@@ -15,8 +15,9 @@
         </dataSource>
     </transactionManager>
   -->
-    <typeAlias alias="parameterTypeHandler" type="cl.bennu.reports.persistence.handler.ParameterTypeHandler"/>
-    <typeHandler javaType="cl.bennu.reports.commons.enums.ParameterTypeEnum" callback="parameterTypeHandler"/>
+
+    <typeHandler javaType="cl.bennu.reports.commons.enums.ParameterTypeEnum" callback="cl.bennu.reports.persistence.handler.ParameterTypeHandler"/>
+    <typeHandler javaType="cl.bennu.reports.commons.enums.ReportGenerateResponseEnum" callback="cl.bennu.reports.persistence.handler.ReportGenerateResponseHandler"/>
 
 
     <transactionManager type="EXTERNAL">
@@ -34,6 +35,7 @@
 
     <sqlMap resource="cl/bennu/reports/persistence/mapper/report.xml"/>
     <sqlMap resource="cl/bennu/reports/persistence/mapper/parameter.xml"/>
+    <sqlMap resource="cl/bennu/reports/persistence/mapper/log.xml"/>
 
 
 </sqlMapConfig>
