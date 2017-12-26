@@ -27,8 +27,8 @@
 
         <pathelement location="${env.JBOSS_HOME}/server/default/lib/javax.servlet.jar" />
         <pathelement location="${env.JBOSS_HOME}/server/default/lib/javax.servlet.jsp.jar" />
-        <pathelement location="${env.TOMCAT_HOME}/lib/servlet-api.jar"/>
-        <pathelement location="${env.TOMCAT_HOME}/lib/jsp-api.jar"/>
+        <pathelement location="${env.TOMCAT_HOME}/common/lib/servlet-api.jar"/>
+        <pathelement location="${env.TOMCAT_HOME}/common/lib/jsp-api.jar"/>
     </path>
 
     <target name="init">

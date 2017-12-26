@@ -15,9 +15,10 @@ node {
 
         antHome = '/usr/local/lib/apache-ant-1.8.4'
         sonarHome = '/usr/local/lib/sonar-scanner-2.8'
-env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
+
+
         sh 'printenv'
-env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
+
         git url: 'https://github.com/camilomolina/reports1.4', branch: 'jenkins'
         //checkout scm
     }
