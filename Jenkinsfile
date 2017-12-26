@@ -16,6 +16,8 @@ node {
         antHome = '/usr/local/lib/apache-ant-1.8.4'
         sonarHome = '/usr/local/lib/sonar-scanner-2.8'
 
+        sh 'printenv'
+
         //git url: 'https://github.com/camilomolina/reports1.4', branch: 'jenkins'
         checkout scm
     }

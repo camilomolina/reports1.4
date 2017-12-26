@@ -110,12 +110,15 @@ public class MaintainerDatasourceAction extends BaseAction {
         }
 
         ConexionDTO conexionDTO = new ConexionDTO();
+        Connection cn = null;
         try {
             Class.forName(driverBD);
-            Connection cn = DriverManager.getConnection(url, user, pass);
+            cn = DriverManager.getConnection(url, user, pass);
             conexionDTO.setCheck(Boolean.TRUE);
         } catch (Exception e) {
             conexionDTO.setCheck(Boolean.FALSE);
+        } finally {
+            if (cn != null) cn.close();
         }
 
         JSONObject jsonObject = JSONObject.fromObject(conexionDTO);
