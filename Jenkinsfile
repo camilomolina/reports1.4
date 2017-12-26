@@ -24,6 +24,8 @@ node {
     }
     stage('Build') {
         echo 'Building'
+        env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
+                sh 'printenv'
         sh "${antHome}/bin/ant clean"
         sh "${antHome}/bin/ant war"
     }
