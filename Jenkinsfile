@@ -8,7 +8,7 @@ node {
     def sshPass = '11042.'
 
     env.JAVA_HOME = '/usr/lib/jvm/j2sdk1.4.2_19'
-    env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-9.0.0.M26'
+    env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-7.0.82'
 
     stage('Environment') {
         echo 'Environment'
