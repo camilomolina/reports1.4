@@ -19,8 +19,8 @@ node {
 
         sh 'printenv'
 
-        //git url: 'https://github.com/camilomolina/jenkins-labs.git', branch: 'develop'
-        checkout scm
+        git url: 'https://github.com/camilomolina/reports1.4', branch: 'jenkins'
+        //checkout scm
     }
     stage('Build') {
         echo 'Building'
