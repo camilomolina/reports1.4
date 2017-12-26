@@ -16,19 +16,12 @@ node {
         antHome = '/usr/local/lib/apache-ant-1.8.4'
         sonarHome = '/usr/local/lib/sonar-scanner-2.8'
 
-        env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
-        sh 'printenv'
-
         //git url: 'https://github.com/camilomolina/reports1.4', branch: 'jenkins'
         checkout scm
     }
 
     stage('Build') {
         echo 'Building'
-        env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
-
-        sh 'printenv'
-    echo 'Building2'
 
         sh "${antHome}/bin/ant clean"
         sh "${antHome}/bin/ant war"
@@ -42,7 +35,7 @@ node {
         echo 'deployment'
         sh "sudo sshpass -p ${sshPass} ssh ${ssh} 'sudo /etc/init.d/tomcat stop'"
 
-        sh "sudo sshpass -p ${sshPass} scp build/jenkins-labs.war ${ssh}:/home/it"
+        sh "sudo sshpass -p ${sshPass} scp build/reports14.war ${ssh}:/home/it"
         sh "sudo sshpass -p ${sshPass} ssh ${ssh} 'sudo cp /home/it/reports14.war /usr/local/bin/apache-tomcat-9.0.0.M26/webapps'"
         sh "sudo sshpass -p ${sshPass} ssh ${ssh} 'sudo chown -R tomcat:tomcat /usr/local/bin/apache-tomcat-9.0.0.M26'"
 
