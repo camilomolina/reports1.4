@@ -109,7 +109,7 @@ CREATE TABLE [dbo].[LOG_REPORTES] (
   [LOG_NOMBRE] varchar(200) NOT NULL,
   [LOG_HOST] varchar(60) NOT NULL,
   [LOG_USUARIO] varchar (60) NULL,
-  [LOG_SQL] varchar(200) NOT NULL,
+  [LOG_SQL] varchar(max) NOT NULL,
   [LOG_URL] varchar(200) NOT NULL,
   [LOG_FECHA_INICIO_CONSULTA_DB] datetime NOT NULL,
   [LOG_FECHA_TERMINO_CONSULTA_DB] datetime NULL,
