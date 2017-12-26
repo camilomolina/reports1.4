@@ -8,17 +8,16 @@ node {
     def sshPass = '11042.'
 
     env.JAVA_HOME = '/usr/lib/jvm/j2sdk1.4.2_19'
-    env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-4.1.40'
-    TOMCAT_HOME = '/usr/local/bin/apache-tomcat-4.1.40'
+    env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
 
     stage('Environment') {
         echo 'Environment'
 
         antHome = '/usr/local/lib/apache-ant-1.8.4'
         sonarHome = '/usr/local/lib/sonar-scanner-2.8'
-
+env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
         sh 'printenv'
-
+env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
         git url: 'https://github.com/camilomolina/reports1.4', branch: 'jenkins'
         //checkout scm
     }
