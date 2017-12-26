@@ -10,6 +10,7 @@ node {
     env.JAVA_HOME = '/usr/lib/jvm/j2sdk1.4.2_19'
     env.TOMCAT_HOME = '/usr/local/bin/apache-tomcat-5.5.36'
 
+
     stage('Environment') {
         echo 'Environment'
 
