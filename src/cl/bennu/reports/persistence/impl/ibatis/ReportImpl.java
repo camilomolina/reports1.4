@@ -159,12 +159,16 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
 
             // cerrando db
             try {
+                preparedStatement.close();
                 resultSet.close();
-                connection.close();
             } catch (Exception e){}
         } catch (Exception e) {
             throw new ExecuteException(sqlF, e);
         }
+
+        try {
+            connection.close();
+        } catch (Exception e){}
 
         System.out.println("-- REPORTS14 -- : Cierra conexion DB " + conexionDTO.getName());
 
