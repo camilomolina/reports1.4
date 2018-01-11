@@ -110,8 +110,8 @@ public class DynamicReportDelegate {
         return DynamicReportBusiness.getInstance().getReport(contextDTO, name);
     }
 
-    public OutputStream generate(ContextDTO contextDTO, ReportDTO reportDTO) throws Exception {
-        return DynamicReportBusiness.getInstance().generate(contextDTO, reportDTO);
+    public OutputStream generate(ContextDTO contextDTO, ReportDTO dto) throws Exception {
+        return DynamicReportBusiness.getInstance().generate(contextDTO, dto);
     }
 
     public List getAllReport(ContextDTO contextDTO) throws Exception {

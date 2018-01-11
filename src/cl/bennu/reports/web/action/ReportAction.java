@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
-
 public class ReportAction extends BaseAction {
 
     private static final String START_REPORT = "startReport";
@@ -30,21 +29,19 @@ public class ReportAction extends BaseAction {
         ReportForm reportForm = (ReportForm)form;
 
         ReportDTO reportDTO = DynamicReportDelegate.getInstance().getReport(buildContext(request), reportForm.getReport());
-
-        request.getSession().setAttribute("SESSION_Report", reportDTO);
+        reportForm.setReportDTO(reportDTO);
 
         return mapping.findForward(START_REPORT);
     }
 
     public void generateBase64(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ReportDTO reportDTO = (ReportDTO) request.getSession().getAttribute("SESSION_Report");
+        ReportForm reportForm = (ReportForm)form;
+        ReportDTO reportDTO = reportForm.getReportDTO();
 
         StringBuffer messages = new StringBuffer();
         boolean generate = true;
 
         SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
-        //SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("MM/yyyy");
-        //SimpleDateFormat simpleDateFormat3 = new SimpleDateFormat("yyyy");
 
         Iterator parameterIter = IteratorUtils.getIterator(reportDTO.getParameterList());
         while(parameterIter.hasNext()) {
@@ -106,11 +103,7 @@ public class ReportAction extends BaseAction {
                     if (diffDays > days) {
                         generate = false;
                         // error en el rango de dias
-                        /*
-                        JSONObject jsonObject = JSONObject.fromObject("Error de validacion");
-                        ServletOutputStream servletOutputStream = response.getOutputStream();
-                        servletOutputStream.write(jsonObject.toString().getBytes());
-                        */
+
                         messages.append("Error en el rango maximo de fechas para " + parameterDTO.getName());
                         messages.append("\n");
                     }
@@ -124,29 +117,13 @@ public class ReportAction extends BaseAction {
 
                 request.getSession().setAttribute("SESSION_ReportGenerate", byteArrayOutputStream);
 
-                //BASE64Encoder base64Encoder = new BASE64Encoder();
-                //String report = base64Encoder.encode(byteArrayOutputStream.toByteArray());
-
                 ResponseJSON responseJSON = new ResponseJSON();
                 responseJSON.setResponseType(new Long(1));
                 responseJSON.setResponse(Boolean.TRUE);
-                //responseJSON.setO(report);
 
                 JSONObject jsonObject = JSONObject.fromObject(responseJSON);
                 ServletOutputStream servletOutputStream = response.getOutputStream();
                 servletOutputStream.write(jsonObject.toString().getBytes());
-
-                /*
-                response.setHeader("Expires", "0");
-                response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-                response.setHeader("Pragma", "public");
-                response.setContentType("bad/type"); //--Z revisar
-                response.addHeader("Content-Disposition", "attachment; filename=" + reportDTO.getName() + ".xls");
-                response.setContentLength(byteArrayOutputStream.size());
-
-                byteArrayOutputStream.writeTo(response.getOutputStream());
-                response.getOutputStream().flush();
-                */
             } catch (Exception e) {
                 ResponseJSON responseJSON = new ResponseJSON();
                 responseJSON.setResponseType(new Long(2));
@@ -171,27 +148,15 @@ public class ReportAction extends BaseAction {
     }
 
     public void generate(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ReportDTO reportDTO = (ReportDTO) request.getSession().getAttribute("SESSION_Report");
-
-        String report = request.getParameter("report");
+        ReportForm reportForm = (ReportForm) form;
+        ReportDTO reportDTO = reportForm.getReportDTO();
 
         response.setHeader("Expires", "0");
         response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
         response.setHeader("Pragma", "public");
         response.setContentType("application/vnd.ms-excel");
 
-        /*
-        response.setContentType("bad/type"); //--Z revisar
-        response.setContentType("text/plain");
-        response.setContentType("application/vnd.ms-excel");
-        response.setContentType("application/pdf");
-        response.setContentType("application/msword");
-
-        */
         response.addHeader("Content-Disposition", "attachment; filename=" + reportDTO.getName() + ".xls");
-
-        //BASE64Decoder decoder = new BASE64Decoder();
-        //byte[] pdfContent = decoder.decodeBuffer(report);
 
         ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream)request.getSession().getAttribute("SESSION_ReportGenerate");
         request.getSession().removeAttribute("SESSION_ReportGenerate");
@@ -202,5 +167,4 @@ public class ReportAction extends BaseAction {
         outputStream.flush();
         outputStream.close();
     }
-
 }

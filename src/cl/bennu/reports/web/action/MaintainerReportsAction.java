@@ -32,7 +32,6 @@ public class MaintainerReportsAction extends BaseAction {
     private static final String PARAMETER_LIST = "parametersList";
     private static final String REPORT_LIST = "reportList";
 
-
     public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MaintainerReportsForm maintainerReportsForm = (MaintainerReportsForm) form;
         ((MaintainerReportsForm) form).setReportId(null);
