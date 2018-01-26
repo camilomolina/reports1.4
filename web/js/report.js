@@ -10,6 +10,7 @@ var PARAMETER_TYPE_DATE_RANGE = 5;
 var PARAMETER_TYPE_ALFANUMERIC_PLUS_LIKE = 6;
 
 var ERROR_MESSAGE = [];
+
 var Report = {
     init: function () {
         $("input[type=button]").button().click(function (event) {
@@ -35,28 +36,28 @@ var Report = {
                         maxDate = "+" + data1 + "d";
                     }
 
-                    $("#"+parameterName+"_init").datepicker({
+                    $("#" + parameterName + "_init").datepicker({
                         dateFormat: data2 == 2 ? "mm/yy" : (data2 == 3 ? "yy" : "dd/mm/yy"),
                         maxDate: maxDate,
-                        onClose: function(text, obj) {
-                            $("#"+parameterName+"_final").datepicker( "option", "minDate", text );
+                        onClose: function (text, obj) {
+                            $("#" + parameterName + "_final").datepicker("option", "minDate", text);
                         },
-                        onSelect: function(text, obj){
-                            $("#"+parameterName+"_final").val("");
+                        onSelect: function (text, obj) {
+                            $("#" + parameterName + "_final").val("");
                         }
                     });
-                    $("#"+parameterName+"_final").datepicker({
+                    $("#" + parameterName + "_final").datepicker({
                         dateFormat: data2 == 2 ? "mm/yy" : (data2 == 3 ? "yy" : "dd/mm/yy"),
                         maxDate: maxDate,
-                        onClose: function(text, obj) {
-                            $("#"+parameterName+"_init").datepicker( "option", "maxDate", text );
+                        onClose: function (text, obj) {
+                            $("#" + parameterName + "_init").datepicker("option", "maxDate", text);
                         }
                     });
                 }
             }
         });
     },
-    validate: function() {
+    validate: function () {
         var forward = true;
         ERROR_MESSAGE = [];
 
@@ -98,6 +99,8 @@ var Report = {
         return forward;
     },
     generate: function () {
+        var d = new Date();
+
         if (Report.validate()) {
             $("#dialogBase64").dialog({
                 title: "Mensaje",
@@ -106,46 +109,33 @@ var Report = {
                 closeOnEscape: false,
                 closeText: false,
                 draggable: false,
-                open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); }
+                open: function (event, ui) {
+                    $(".ui-dialog-titlebar-close").hide();
+                }
             });
 
             $("#method").val("generateBase64");
 
-            /*
-            $(document).on("submit", "form.fileDownloadForm", function (e) {
-                $.fileDownload($(this).prop('action'), {
-                    preparingMessageHtml: "We are preparing your report, please wait...",
-                    failMessageHtml: "There was a problem generating your report, please try again.",
-                    httpMethod: "POST",
-                    data: $(this).serialize()
-                });
-                e.preventDefault(); //otherwise a normal form submit would occur
-            });
-*/
             $.ajax({
-                url: "/reports14/report.do",
+                url: "/reports14/report.do?time=" + d.getTime(),
                 method: "POST",
                 data: $("#reportForm").serialize(),
                 dataType: "json",
                 success: function (json) {
                     $("#dialogBase64").dialog("close");
-
-                    if (json.responseType == 1) {
-                        $("#method").val("generate");
-                        //$("#report").val(json.o);
+                    if (1 === json.responseType) {
+                        $('#method').val("generate");
                         $("#reportForm").submit();
+                        $('#method').val("generateBase64");
+                        return false;
                     } else {
                         Generic.errorDialogMsg(json.message);
                     }
                 }
             });
 
-//            $("#method").val("generate");
-//            $("#reportForm").submit();
         } else {
             Generic.errorDialog(ERROR_MESSAGE);
         }
     }
 }
-
-

@@ -46,7 +46,19 @@
     </select>
 
     <select id="getReportByName" parameterClass="java.lang.String" resultMap="reportResult">
-        <include refid="selectReport"/>
+        SELECT RPTE_SEQ_CDG
+          , AREA_SEQ_CDG
+          , CONX_SEQ_CDG
+          , RPTE_NOMBRE
+          , RPTE_DESCRIPCION
+          , NULL AS RPTE_SQL
+          , RPTE_ACTIVO
+          , RPTE_USUARIO_CREADOR
+          , RPTE_FECHA_CREACION
+          , RPTE_USUARIO_MODIFICADOR
+          , RPTE_FECHA_MODIFICACION
+          , RPTE_SEQ_CDG as RPTE_SEQ_CDG_4_PARAMETER
+        FROM REPORTE
         WHERE RPTE_NOMBRE = #value#
     </select>
 
