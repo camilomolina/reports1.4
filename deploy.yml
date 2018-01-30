@@ -1,0 +1,11 @@
+---
+- hosts: tomcat
+  gather_facts: false
+  become: true
+  remote_user: it
+
+  tasks:
+    - name: deploy artifacts
+     copy: src={{item.src}} dest={{item.dest}} mode=0644 group=tomcat owner=tomcat
+       with_items:
+         - {src: build/reports14.war, dest: /usr/local/bin/apache-tomcat-9.0.0.M26/webapps/reports14.war}

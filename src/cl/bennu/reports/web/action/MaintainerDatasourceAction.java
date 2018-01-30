@@ -34,7 +34,7 @@ public class MaintainerDatasourceAction extends BaseAction {
         return mapping.findForward(START_DATASOURCE);
     }
 
-    private ConexionDTO fillConexionDTO (MaintainerDatasourceForm maintainerDatasourceForm) {
+    private ConexionDTO fillConexionDTO(MaintainerDatasourceForm maintainerDatasourceForm) {
         ControllerDTO controllerDTO = new ControllerDTO();
         controllerDTO.setId(maintainerDatasourceForm.getControllerId());
 
@@ -73,7 +73,7 @@ public class MaintainerDatasourceAction extends BaseAction {
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MaintainerDatasourceForm maintainerDatasourceForm = (MaintainerDatasourceForm) form;
 
-        List conexionList= DynamicReportDelegate.getInstance().getAllConexionSummary(buildContext(request));
+        List conexionList = DynamicReportDelegate.getInstance().getAllConexionSummary(buildContext(request));
         maintainerDatasourceForm.setConexionList(conexionList);
 
         return mapping.findForward(DATASOURCE_LIST);

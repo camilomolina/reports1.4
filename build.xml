@@ -85,14 +85,16 @@
         <delete dir="docker/artefacts" />
     </target>
 
-    <target name="deployJBoss" depends="war">
-        <copy todir="${env.JBOSS_HOME}/server/default/deploy" file="build/reports14.war" />
+    <target name="deploy" depends="war">
+        <!--<copy todir="${env.JBOSS_HOME}/server/default/deploy" file="build/reports14.war" />-->
+        <copy todir="${env.TOMCAT_HOME}/webapps" file="build/reports14.war"/>
     </target>
 
-    <target name="redeployJBoss" depends="undeployJBoss, deployJBoss" />
+    <target name="redeploy" depends="undeploy, deploy" />
 
-    <target name="undeployJBoss">
-        <delete failonerror="false" includeemptydirs="true" file="${env.JBOSS_HOME}/server/default/deploy/reports14.war" />
+    <target name="undeploy">
+        <!--<delete failonerror="false" includeemptydirs="true" file="${env.JBOSS_HOME}/server/default/deploy/reports14.war" />-->
+        <delete failonerror="false" includeemptydirs="true" file="${env.TOMCAT_HOME}/webapps/reports14.war"/>
     </target>
 
     <target name="javadoc" description="Crea Javadoc API">

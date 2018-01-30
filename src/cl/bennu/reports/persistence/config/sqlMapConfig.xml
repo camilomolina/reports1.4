@@ -24,7 +24,7 @@
         <property name="DefaultAutoCommit" value="false"/>
         <property name="SetAutoCommitAllowed" value="false"/>
         <dataSource type="JNDI">
-            <property name="DataSource" value="java:/ReportDS"/>
+            <property name="DataSource" value="java:comp/env/jdbc/ReportDS"/>
         </dataSource>
     </transactionManager>
 

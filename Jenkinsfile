@@ -42,13 +42,7 @@ node {
     }
     stage('Deploy') {
         echo 'deployment'
-        sh "sudo sshpass -p ${sshPass} ssh ${ssh} 'sudo /etc/init.d/tomcat stop'"
-
-        sh "sudo sshpass -p ${sshPass} scp build/${app} ${ssh}:/home/it"
-        sh "sudo sshpass -p ${sshPass} ssh ${ssh} 'sudo cp /home/it/${app} /usr/local/bin/apache-tomcat-9.0.0.M26/webapps'"
-        sh "sudo sshpass -p ${sshPass} ssh ${ssh} 'sudo chown -R tomcat:tomcat /usr/local/bin/apache-tomcat-9.0.0.M26'"
-
-        sh "sudo sshpass -p ${sshPass} ssh ${ssh} 'sudo /etc/init.d/tomcat start'"
+        ansiblePlaybook(playbook: 'deploy.yml')
     }
     stage('Results') {
         archive "build/${app}"
