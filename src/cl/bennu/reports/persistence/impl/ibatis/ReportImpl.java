@@ -64,6 +64,7 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
             driverBD = "org.postgresql.Driver";
         } else if (conexionDTO.getControllerDTO().getId().equals(new Long(2))) {
             driverBD = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
+            //driverBD = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
         } else if (conexionDTO.getControllerDTO().getId().equals(new Long(3))) {
             driverBD = "com.mysql.jdbc.Driver";
         } else if (conexionDTO.getControllerDTO().getId().equals(new Long(4))) {
