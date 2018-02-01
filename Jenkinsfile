@@ -4,9 +4,6 @@ node {
     def antHome
     def sonarHome
 
-    def ssh
-    def sshPass
-
     def app
 
     env.JAVA_HOME = '/usr/lib/jvm/j2sdk1.4.2_19'
@@ -18,14 +15,10 @@ node {
         antHome = '/usr/local/lib/apache-ant-1.8.4'
         sonarHome = '/usr/local/lib/sonar-scanner-2.8'
 
-        ssh = 'it@10.96.0.203'
-        sshPass = '11042.'
-
         app = 'reports14.war'
 
         sh 'printenv'
 
-        //git url: 'https://github.com/camilomolina/reports1.4', branch: 'jenkins'
         checkout scm
     }
 
@@ -37,11 +30,13 @@ node {
     }
     stage('Test') {
         echo 'Testing'
+
         env.JAVA_HOME = '/usr/lib/jvm/jdk1.8.0_121'
         sh "${sonarHome}/bin/sonar-scanner"
     }
     stage('Deploy') {
-        echo 'deployment'
+        echo 'Deployment'
+
         ansiblePlaybook(playbook: 'deploy.yml')
     }
     stage('Results') {
