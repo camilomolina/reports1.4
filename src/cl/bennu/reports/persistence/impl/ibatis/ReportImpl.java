@@ -130,8 +130,9 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
         }
 
         List result;
+        ResultSet resultSet = null;
         try {
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
             //System.out.println("-- REPORTS14 -- : Termino de ejecucion " + reportDTO.getDescription());
@@ -158,12 +159,14 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
             }
 
             // cerrando db
+
+        } catch (Exception e) {
+            throw new ExecuteException(sqlF, e);
+        } finally {
             try {
                 preparedStatement.close();
                 resultSet.close();
             } catch (Exception e){}
-        } catch (Exception e) {
-            throw new ExecuteException(sqlF, e);
         }
 
         try {
