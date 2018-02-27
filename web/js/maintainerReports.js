@@ -343,6 +343,12 @@ var MaintainerReports = {
                 }
             });
         });
+    },
+    link: function() {
+        var a = document.createElement('a');
+        a.target="_blank";
+        a.href=url;
+        a.click();
     }
 };
 
