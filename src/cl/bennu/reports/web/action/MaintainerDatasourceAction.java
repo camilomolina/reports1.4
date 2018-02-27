@@ -34,7 +34,7 @@ public class MaintainerDatasourceAction extends BaseAction {
         return mapping.findForward(START_DATASOURCE);
     }
 
-    private ConexionDTO fillConexionDTO (MaintainerDatasourceForm maintainerDatasourceForm) {
+    private ConexionDTO fillConexionDTO(MaintainerDatasourceForm maintainerDatasourceForm) {
         ControllerDTO controllerDTO = new ControllerDTO();
         controllerDTO.setId(maintainerDatasourceForm.getControllerId());
 
@@ -73,7 +73,7 @@ public class MaintainerDatasourceAction extends BaseAction {
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MaintainerDatasourceForm maintainerDatasourceForm = (MaintainerDatasourceForm) form;
 
-        List conexionList= DynamicReportDelegate.getInstance().getAllConexionSummary(buildContext(request));
+        List conexionList = DynamicReportDelegate.getInstance().getAllConexionSummary(buildContext(request));
         maintainerDatasourceForm.setConexionList(conexionList);
 
         return mapping.findForward(DATASOURCE_LIST);
@@ -110,12 +110,15 @@ public class MaintainerDatasourceAction extends BaseAction {
         }
 
         ConexionDTO conexionDTO = new ConexionDTO();
+        Connection cn = null;
         try {
             Class.forName(driverBD);
-            Connection cn = DriverManager.getConnection(url, user, pass);
+            cn = DriverManager.getConnection(url, user, pass);
             conexionDTO.setCheck(Boolean.TRUE);
         } catch (Exception e) {
             conexionDTO.setCheck(Boolean.FALSE);
+        } finally {
+            if (cn != null) cn.close();
         }
 
         JSONObject jsonObject = JSONObject.fromObject(conexionDTO);
