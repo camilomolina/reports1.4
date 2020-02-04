@@ -39,7 +39,7 @@
     </update>
 
     <delete id="deleteParameterType" parameterClass="java.lang.Long">
-        DELETE TIPO_PARAMETRO_REPORTE WHERE  TPPR_SEQ_CDG = #value#
+        DELETE FROM TIPO_PARAMETRO_REPORTE WHERE TPPR_SEQ_CDG = #value#
     </delete>
 
 </sqlMap>

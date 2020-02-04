@@ -3,6 +3,7 @@
 
 
     <property environment="env" />
+    <property id="TOMCAT_HOME" name="TOMCAT_HOME" value="/usr/local/bin/apache-tomcat-9.0.21" />
 
     <path id="project.class.path">
         <pathelement location="lib/commons-codec-1.5.jar" />
@@ -24,11 +25,7 @@
         <pathelement location="lib/jtds-1.2.jar" />
         <pathelement location="lib/json-lib-2.3-jdk13.jar" />
         <pathelement location="lib/ezmorph-1.0.6.jar" />
-
-        <pathelement location="${env.JBOSS_HOME}/server/default/lib/javax.servlet.jar" />
-        <pathelement location="${env.JBOSS_HOME}/server/default/lib/javax.servlet.jsp.jar" />
-        <pathelement location="${env.TOMCAT_HOME}/common/lib/servlet-api.jar"/>
-        <pathelement location="${env.TOMCAT_HOME}/common/lib/jsp-api.jar"/>
+        <pathelement location="lib/servlet-api-3.1.jar" />
     </path>
 
     <target name="init">
@@ -62,6 +59,7 @@
             <fileset dir="lib" includes="**/*.jar" >
                 <exclude name="lib/log4j-1.2.13.jar"/>
                 <exclude name="lib/hsqldb.jar"/>
+                <exclude name="lib/servlet-api-3.1.jar"/>
             </fileset>
         </copy>
     </target>
@@ -86,15 +84,13 @@
     </target>
 
     <target name="deploy" depends="war">
-        <!--<copy todir="${env.JBOSS_HOME}/server/default/deploy" file="build/reports14.war" />-->
-        <copy todir="${env.TOMCAT_HOME}/webapps" file="build/reports14.war"/>
+        <copy todir="${TOMCAT_HOME}/webapps" file="build/reports14.war"/>
     </target>
 
     <target name="redeploy" depends="undeploy, deploy" />
 
     <target name="undeploy">
-        <!--<delete failonerror="false" includeemptydirs="true" file="${env.JBOSS_HOME}/server/default/deploy/reports14.war" />-->
-        <delete failonerror="false" includeemptydirs="true" file="${env.TOMCAT_HOME}/webapps/reports14.war"/>
+        <delete failonerror="false" includeemptydirs="true" file="${TOMCAT_HOME}/webapps/reports14.war"/>
     </target>
 
     <target name="javadoc" description="Crea Javadoc API">

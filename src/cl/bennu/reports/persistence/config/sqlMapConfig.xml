@@ -7,17 +7,13 @@
     <!--
     <transactionManager type="JDBC" commitRequired="true">
         <dataSource type="SIMPLE">
-            <property name="JDBC.Driver" value="com.microsoft.jdbc.sqlserver.SQLServerDriver"/>
-            <property name="JDBC.ConnectionURL" value="jdbc:sqlserver://10.220.0.31;databaseName=BTCSHPCDB"/>
-            <property name="JDBC.Username" value="user_hipotecario"/>
-            <property name="JDBC.Password" value="hipoteca2012"/>
+            <property name="JDBC.Driver" value="com.mysql.jdbc.Driver"/>
+            <property name="JDBC.ConnectionURL" value="jdbc:mysql://localhost:3306/reports14"/>
+            <property name="JDBC.Username" value="postgres"/>
+            <property name="JDBC.Password" value="mh-pass..123"/>
             <property name="JDBC.DefaultAutoCommit" value="true"/>
         </dataSource>
     </transactionManager>
-  -->
-
-    <typeHandler javaType="cl.bennu.reports.commons.enums.ParameterTypeEnum" callback="cl.bennu.reports.persistence.handler.ParameterTypeHandler"/>
-    <typeHandler javaType="cl.bennu.reports.commons.enums.ReportGenerateResponseEnum" callback="cl.bennu.reports.persistence.handler.ReportGenerateResponseHandler"/>
 
 
     <transactionManager type="EXTERNAL">
@@ -25,6 +21,21 @@
         <property name="SetAutoCommitAllowed" value="false"/>
         <dataSource type="JNDI">
             <property name="DataSource" value="java:comp/env/jdbc/ReportDS"/>
+        </dataSource>
+    </transactionManager>
+    -->
+
+    <typeHandler javaType="cl.bennu.reports.commons.enums.ParameterTypeEnum" callback="cl.bennu.reports.persistence.handler.ParameterTypeHandler"/>
+    <typeHandler javaType="cl.bennu.reports.commons.enums.ReportGenerateResponseEnum" callback="cl.bennu.reports.persistence.handler.ReportGenerateResponseHandler"/>
+
+
+    <transactionManager type="JDBC" commitRequired="true">
+        <dataSource type="SIMPLE">
+            <property name="JDBC.Driver" value="com.mysql.jdbc.Driver"/>
+            <property name="JDBC.ConnectionURL" value="jdbc:mysql://mysql:3306/reports14"/>
+            <property name="JDBC.Username" value="root"/>
+            <property name="JDBC.Password" value="root"/>
+            <property name="JDBC.DefaultAutoCommit" value="true"/>
         </dataSource>
     </transactionManager>
 

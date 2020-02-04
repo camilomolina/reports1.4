@@ -63,7 +63,7 @@
     </insert>
 
     <delete id="deleteParameterByReportId" parameterClass="java.lang.Long">
-        DELETE PARAMETROS_REPORTE WHERE RPTE_SEQ_CDG=#value#
+        DELETE FROM PARAMETROS_REPORTE WHERE RPTE_SEQ_CDG = #value#
     </delete>
 
 </sqlMap>
