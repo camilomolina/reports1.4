@@ -15,6 +15,8 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 
@@ -53,6 +55,8 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
 
     public List execute(ReportDTO reportDTO, ConexionDTO conexionDTO) throws Exception {
         System.out.println("-- REPORTS14 -- : Ejecutando reporte " + reportDTO.getDescription());
+
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         String driverBD = "";
         String url = conexionDTO.getUrl();
@@ -111,15 +115,18 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
                         } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.ALPHANUMERIC_PLUS_LIKE)) {
                             preparedStatement.setString(i, "%" + parameterDTO.getValue().toString() + "%");
                         } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE)) {
-                            preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValue()).getTime()));
+                            //preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValue()).getTime()));
+                            preparedStatement.setString(i, dateFormat.format((Date)parameterDTO.getValue()));
                         } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.NUMERIC)) {
                             preparedStatement.setLong(i, Long.parseLong(parameterDTO.getValue().toString()));
                         } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.BOOLEAN)) {
                             preparedStatement.setBoolean(i, ((Boolean) parameterDTO.getValue()).booleanValue());
                         } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE_RANGE)) {
-                            preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR1()).getTime()));
+                            //preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR1()).getTime()));
+                            preparedStatement.setString(i, dateFormat.format((Date)parameterDTO.getValue()));
                             i++;
-                            preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR2()).getTime()));
+                            //preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR2()).getTime()));
+                            preparedStatement.setString(i, dateFormat.format((Date)parameterDTO.getValue()));
                         }
                     }
                 }
