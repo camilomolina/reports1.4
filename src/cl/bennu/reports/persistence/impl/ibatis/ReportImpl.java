@@ -123,10 +123,10 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
                             preparedStatement.setBoolean(i, ((Boolean) parameterDTO.getValue()).booleanValue());
                         } else if (parameterDTO.getParameterTypeEnum().equals(ParameterTypeEnum.DATE_RANGE)) {
                             //preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR1()).getTime()));
-                            preparedStatement.setString(i, dateFormat.format((Date)parameterDTO.getValue()));
+                            preparedStatement.setString(i, dateFormat.format((Date)parameterDTO.getValueR1()));
                             i++;
                             //preparedStatement.setDate(i, new java.sql.Date(((Date) parameterDTO.getValueR2()).getTime()));
-                            preparedStatement.setString(i, dateFormat.format((Date)parameterDTO.getValue()));
+                            preparedStatement.setString(i, dateFormat.format((Date)parameterDTO.getValueR2()));
                         }
                     }
                 }
