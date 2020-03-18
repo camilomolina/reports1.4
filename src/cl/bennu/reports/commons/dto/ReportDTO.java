@@ -19,6 +19,7 @@ public class ReportDTO extends BaseDTO {
     private List parameterList;
     private Long conexionId;
     private Boolean active;
+    private Boolean csv;
 
     public Boolean getActive() {
         return active;
@@ -74,5 +75,13 @@ public class ReportDTO extends BaseDTO {
 
     public void setConexionId(Long conexionId) {
         this.conexionId = conexionId;
+    }
+
+    public Boolean getCsv() {
+        return csv;
+    }
+
+    public void setCsv(Boolean csv) {
+        this.csv = csv;
     }
 }

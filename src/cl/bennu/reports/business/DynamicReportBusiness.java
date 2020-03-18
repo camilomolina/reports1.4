@@ -11,6 +11,8 @@ import cl.bennu.reports.persistence.dao.*;
 import cl.bennu.reports.persistence.factory.AbstractFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -18,6 +20,8 @@ import org.apache.poi.hssf.util.Region;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DynamicReportBusiness {
@@ -242,6 +246,10 @@ public class DynamicReportBusiness {
         reportDTO.setParameterList(dto.getParameterList());
         ConexionDTO conexionDTO = getConexionById(contextDTO, reportDTO.getConexionId());
 
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String CVS_SEPERATOR_CHAR=",";
+        String NEW_LINE_CHARACTER="\r\n";
+
         String reportTitle = reportDTO.getName();
         Date now = new Date();
 
@@ -274,6 +282,11 @@ public class DynamicReportBusiness {
             logDTO.setRemark("SQL:" + e.getSql());
             logDAO.update(logDTO);
             throw e;
+        } catch (Exception e) {
+            logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.ERROR);
+            logDTO.setRemark("Error General:" + Arrays.toString(e.getStackTrace()));
+            logDAO.update(logDTO);
+            throw e;
         }
 
         logDTO.setEndSQL(new Date());
@@ -282,6 +295,7 @@ public class DynamicReportBusiness {
 
         try {
             HSSFWorkbook workBook = new HSSFWorkbook();
+
 
             HSSFFont fontTitle = workBook.createFont();
             fontTitle.setFontHeightInPoints((short) 14);
@@ -334,6 +348,8 @@ public class DynamicReportBusiness {
             sheet.setDefaultColumnWidth((short) 16);
             sheet.setDefaultRowHeight((short) 15);
 
+            StringBuilder csv = new StringBuilder();
+
             int i = 1;
             boolean header = true;
             Iterator iterReportList = IteratorUtils.getIterator(list);
@@ -363,6 +379,7 @@ public class DynamicReportBusiness {
                 row = sheet.createRow(i);
 
                 j = 0;
+                int jsize = set.size();
 
                 // armamos con los ressultados de la consulta
                 Iterator iterReportElement = IteratorUtils.getIterator(set);
@@ -377,29 +394,47 @@ public class DynamicReportBusiness {
                     } else if (o instanceof String) {
                         cell.setCellStyle(cellStyleNormal);
                         cell.setCellValue(o.toString());
+
+                        csv.append(o.toString().replace(CVS_SEPERATOR_CHAR, "."));
                     } else if (o instanceof Number) {
                         cell.setCellStyle(cellStyleNumber);
                         cell.setCellValue(Double.parseDouble(o.toString()));
+
+                        csv.append(Double.parseDouble(o.toString()));
                     } else if (o instanceof Date) {
                         cell.setCellStyle(cellStyleDate);
                         cell.setCellValue((Date) o);
+
+                        csv.append(dateFormat.format(o));
                     } else {
                         cell.setCellStyle(cellStyleNormal);
                         cell.setCellValue(o.toString());
+
+                        csv.append(o.toString().replace(CVS_SEPERATOR_CHAR, "."));
                     }
 
                     j++;
+
+                    if (j < jsize) {
+                        csv.append(CVS_SEPERATOR_CHAR);
+                    }
                 }
 
+                csv.append(NEW_LINE_CHARACTER);
                 i++;
             }
 
+
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            workBook.write(os);
+            if (BooleanUtils.isTrue(reportDTO.getCsv())) {
+                os.write(csv.toString().getBytes());
+            } else {
+                workBook.write(os);
+            }
 
             Date end = new Date();
 
-            if (now.getTime() + (60 * 1000 * 1) < end.getTime()) {
+            if (now.getTime() + (60 * 1000) < end.getTime()) {
                 logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.WARM);
             } else {
                 logDTO.setReportGenerateResponseEnum(ReportGenerateResponseEnum.OK);

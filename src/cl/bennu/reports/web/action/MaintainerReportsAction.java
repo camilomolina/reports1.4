@@ -59,6 +59,7 @@ public class MaintainerReportsAction extends BaseAction {
         maintainerReportsForm.setName("");
         maintainerReportsForm.setSqlDescription("");
         maintainerReportsForm.setSqlText("");
+        maintainerReportsForm.setCsv(false);
 
         //Se setean los valores de parametros
         maintainerReportsForm.setParameterName("");
@@ -112,6 +113,7 @@ public class MaintainerReportsAction extends BaseAction {
         reportDTO.setAreaId(maintainerReportsForm.getAreaId());
         reportDTO.setDescription(maintainerReportsForm.getSqlDescription());
         reportDTO.setSql(maintainerReportsForm.getSqlText());
+        reportDTO.setCsv(maintainerReportsForm.getCsv());
         reportDTO.setActive(Boolean.TRUE);
         reportDTO.setId(maintainerReportsForm.getReportId());
         reportDTO.setConexionId(maintainerReportsForm.getConexionId());
@@ -201,6 +203,7 @@ public class MaintainerReportsAction extends BaseAction {
             maintainerReportsForm.setConexionId(null);
             maintainerReportsForm.setSqlDescription(null);
             maintainerReportsForm.setSqlText(null);
+            maintainerReportsForm.setCsv(false);
             maintainerReportsForm.setParameterId(null);
         } catch (Exception e) {
             System.out.println("No se pudo limpiar el formulario");

@@ -134,23 +134,27 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
                 i++;
             }
         } catch (Exception e) {
+            try {
+                connection.close();
+            } catch (Exception ee){}
+
             throw new ParameterException(sqlF, e);
         }
 
-        List result;
+        List<Map> result;
         try {
             ResultSet resultSet = preparedStatement.executeQuery();
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
             //System.out.println("-- REPORTS14 -- : Termino de ejecucion " + reportDTO.getDescription());
 
-            result = new ArrayList();
+            result = new ArrayList<>();
 
             // retornamos la informacion en un hashmap ordenado
             int column;
             int top = resultSetMetaData.getColumnCount();
             while (resultSet.next()) {
-                Map map = new LinkedHashMap();
+                Map<String, Object> map = new LinkedHashMap<>();
 
                 boolean forward = true;
                 column = 1;
@@ -172,11 +176,11 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
             } catch (Exception e){}
         } catch (Exception e) {
             throw new ExecuteException(sqlF, e);
+        } finally {
+            try {
+                connection.close();
+            } catch (Exception e){}
         }
-
-        try {
-            connection.close();
-        } catch (Exception e){}
 
         System.out.println("-- REPORTS14 -- : Cierra conexion DB " + conexionDTO.getName());
 

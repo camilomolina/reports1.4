@@ -13,6 +13,7 @@
         <result property="description" column="RPTE_DESCRIPCION"/>
         <result property="sql" column="RPTE_SQL"/>
         <result property="active" column="RPTE_ACTIVO"/>
+        <result property="csv" column="RPTE_CSV"/>
         <result property="createUser" column="RPTE_USUARIO_CREADOR"/>
         <result property="create" column="RPTE_FECHA_CREACION"/>
         <result property="updateUser" column="RPTE_USUARIO_MODIFICADOR"/>
@@ -28,6 +29,7 @@
           , RPTE_DESCRIPCION
           , RPTE_SQL
           , RPTE_ACTIVO
+          , RPTE_CSV
           , RPTE_USUARIO_CREADOR
           , RPTE_FECHA_CREACION
           , RPTE_USUARIO_MODIFICADOR
@@ -53,6 +55,7 @@
           , RPTE_DESCRIPCION
           , NULL AS RPTE_SQL
           , RPTE_ACTIVO
+          , RPTE_CSV
           , RPTE_USUARIO_CREADOR
           , RPTE_FECHA_CREACION
           , RPTE_USUARIO_MODIFICADOR
@@ -63,8 +66,8 @@
     </select>
 
     <insert id="insertReport" parameterClass="cl.bennu.reports.commons.dto.ReportDTO">
-        INSERT INTO REPORTE (AREA_SEQ_CDG, CONX_SEQ_CDG, RPTE_NOMBRE, RPTE_DESCRIPCION, RPTE_SQL, RPTE_ACTIVO, RPTE_USUARIO_CREADOR, RPTE_FECHA_CREACION)
-        VALUES (#areaId#, #conexionId#, #name#, #description#, #sql#, #active#, 'ADMIN', CURRENT_DATE)
+        INSERT INTO REPORTE (AREA_SEQ_CDG, CONX_SEQ_CDG, RPTE_NOMBRE, RPTE_DESCRIPCION, RPTE_SQL, RPTE_ACTIVO, RPTE_CSV, RPTE_USUARIO_CREADOR, RPTE_FECHA_CREACION)
+        VALUES (#areaId#, #conexionId#, #name#, #description#, #sql#, #active#, #csv#, 'ADMIN', CURRENT_DATE)
         <selectKey keyProperty="id" resultClass="java.lang.Long">
             SELECT @@IDENTITY
         </selectKey>
@@ -77,6 +80,7 @@
           , RPTE_NOMBRE = #name#
           , RPTE_DESCRIPCION = #description#
           , RPTE_SQL = #sql#
+          , RPTE_CSV = #csv#
         WHERE RPTE_SEQ_CDG = #id#
     </update>
 

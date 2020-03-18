@@ -72,6 +72,7 @@ var MaintainerReports = {
         $("#areaId").val(-1);
         $("#sqlDescription").val("");
         $("#sqlText").val("");
+        $("#csvId").prop("checked", false);
         $("#parameterName").val("");
         $("#parameterTypeId").val(-1);
         $("#parameterRequired").prop("checked", false);
@@ -310,6 +311,7 @@ var MaintainerReports = {
                 $("#areaId").val(-1);
                 $("#sqlDescription").val("");
                 $("#sqlText").val("");
+                $("#csvId").prop("checked", false);
             }
             , error: function () {
                 alert("No pude refrescar los reportes");
@@ -333,6 +335,7 @@ var MaintainerReports = {
                     $("#areaId").val(json.areaId);
                     $("#sqlDescription").val(json.description);
                     $("#sqlText").val(json.sql);
+                    $("#csvId").prop("checked", json.csv);
 
                     MaintainerReports.parameterList();
 

@@ -9,6 +9,7 @@ import cl.bennu.reports.web.delegate.DynamicReportDelegate;
 import cl.bennu.reports.web.form.ReportForm;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -118,7 +119,7 @@ public class ReportAction extends BaseAction {
                 request.getSession().setAttribute("SESSION_ReportGenerate", byteArrayOutputStream);
 
                 ResponseJSON responseJSON = new ResponseJSON();
-                responseJSON.setResponseType(new Long(1));
+                responseJSON.setResponseType(1L);
                 responseJSON.setResponse(Boolean.TRUE);
 
                 JSONObject jsonObject = JSONObject.fromObject(responseJSON);
@@ -126,7 +127,7 @@ public class ReportAction extends BaseAction {
                 servletOutputStream.write(jsonObject.toString().getBytes());
             } catch (Exception e) {
                 ResponseJSON responseJSON = new ResponseJSON();
-                responseJSON.setResponseType(new Long(2));
+                responseJSON.setResponseType(2L);
                 responseJSON.setResponse(Boolean.FALSE);
                 responseJSON.setMessage("Error con la generacion del reporte");
 
@@ -137,7 +138,7 @@ public class ReportAction extends BaseAction {
 
         } else {
             ResponseJSON responseJSON = new ResponseJSON();
-            responseJSON.setResponseType(new Long(2));
+            responseJSON.setResponseType(2L);
             responseJSON.setResponse(Boolean.FALSE);
             responseJSON.setMessage(messages.toString());
 
@@ -154,9 +155,14 @@ public class ReportAction extends BaseAction {
         response.setHeader("Expires", "0");
         response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
         response.setHeader("Pragma", "public");
-        response.setContentType("application/vnd.ms-excel");
 
-        response.addHeader("Content-Disposition", "attachment; filename=" + reportDTO.getName() + ".xls");
+        if (BooleanUtils.isTrue(reportDTO.getCsv())) {
+            response.setContentType("text/csv");
+            response.addHeader("Content-Disposition", "attachment; filename=" + reportDTO.getName() + ".csv");
+        } else {
+            response.setContentType("application/vnd.ms-excel");
+            response.addHeader("Content-Disposition", "attachment; filename=" + reportDTO.getName() + ".xls");
+        }
 
         ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream)request.getSession().getAttribute("SESSION_ReportGenerate");
         request.getSession().removeAttribute("SESSION_ReportGenerate");

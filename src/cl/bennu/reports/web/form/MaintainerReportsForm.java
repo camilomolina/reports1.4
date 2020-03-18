@@ -16,6 +16,7 @@ public class MaintainerReportsForm extends ActionForm {
     private Long areaId;
     private String sqlDescription;
     private String sqlText;
+    private Boolean csv;
     private String parameterName;
     private Long parameterTypeId;
     private Long dateFormatId;
@@ -169,5 +170,13 @@ public class MaintainerReportsForm extends ActionForm {
 
     public void setConexionId(Long conexionId) {
         this.conexionId = conexionId;
+    }
+
+    public Boolean getCsv() {
+        return csv;
+    }
+
+    public void setCsv(Boolean csv) {
+        this.csv = csv;
     }
 }

@@ -11,8 +11,11 @@ RUN cd && \
 COPY . /usr/src/app
 RUN /usr/local/bin/apache-ant/bin/ant -f /usr/src/app/build.xml clean war
 
-FROM jetty:9.4-jre11
-LABEL maintainer="bennu <contacto@bennu.cl>"
-COPY --from=build /usr/src/app/build/reports14.war $JETTY_BASE/webapps/reports14.war
+#FROM jetty:9.4-jre11
+#LABEL maintainer="bennu <contacto@bennu.cl>"
+#COPY --from=build /usr/src/app/build/reports14.war $JETTY_BASE/webapps/reports14.war
 
+FROM tomcat:9-jdk11-adoptopenjdk-openj9
+LABEL maintainer="bennu <contacto@bennu.cl>"
+COPY --from=build /usr/src/app/build/reports14.war $CATALINA_HOME/webapps/reports14.war
 

@@ -81,6 +81,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>CSV</td>
+                    <td>
+                        <html:checkbox property="csv" styleId="csvId" title="¿Es formato CSV?"></html:checkbox>
+                    </td>
+                </tr>
+                <tr>
                     <table id = "tableDatos2">
                         <tr>
                             <td>Par&aacute;metro</td>
