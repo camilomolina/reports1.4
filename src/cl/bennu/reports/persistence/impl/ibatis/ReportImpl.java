@@ -64,16 +64,16 @@ public class ReportImpl extends IbatisUtils implements IReportDAO {
         String pass = new String(Base64.decodeBase64(conexionDTO.getPass()));
 
         //Connection connection = getSqlMapClient().getDataSource().getConnection();
-        if (conexionDTO.getControllerDTO().getId().equals(new Long(1))) {
+        if (conexionDTO.getControllerDTO().getId().equals(1L)) {
             driverBD = "org.postgresql.Driver";
-        } else if (conexionDTO.getControllerDTO().getId().equals(new Long(2))) {
+        } else if (conexionDTO.getControllerDTO().getId().equals(2L)) {
             driverBD = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
             //driverBD = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-        } else if (conexionDTO.getControllerDTO().getId().equals(new Long(3))) {
+        } else if (conexionDTO.getControllerDTO().getId().equals(3L)) {
             driverBD = "com.mysql.jdbc.Driver";
-        } else if (conexionDTO.getControllerDTO().getId().equals(new Long(4))) {
+        } else if (conexionDTO.getControllerDTO().getId().equals(4L)) {
             driverBD = "oracle.jdbc.driver.OracleDriver";
-        } else if (conexionDTO.getControllerDTO().getId().equals(new Long(5))) {
+        } else if (conexionDTO.getControllerDTO().getId().equals(5L)) {
             driverBD = "net.sourceforge.jtds.jdbcx.JtdsDataSource";
         }
 

@@ -247,7 +247,7 @@ public class DynamicReportBusiness {
         ConexionDTO conexionDTO = getConexionById(contextDTO, reportDTO.getConexionId());
 
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String CVS_SEPERATOR_CHAR=",";
+        String CVS_SEPERATOR_CHAR=";";
         String NEW_LINE_CHARACTER="\r\n";
 
         String reportTitle = reportDTO.getName();
