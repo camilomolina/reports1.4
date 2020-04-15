@@ -1,6 +1,6 @@
 sudo docker build -t reports14 .
 
-sudo docker volume create reports
+sudo docker volume create reports-db
 sudo docker container run --name mysql -v reports-db:/var/lib/mysql --network mh_backend -e MYSQL_ROOT_PASSWORD=root -d --restart always mysql:5.7
 sudo docker container exec -i mysql sh -c 'exec mysql -uroot -proot ' < import.sql
 
